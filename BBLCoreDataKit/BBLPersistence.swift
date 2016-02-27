@@ -17,7 +17,6 @@ public class BBLPersistence: NSObject {
     private let shouldKillStore: Bool
     private var contexts = [NSManagedObjectContext]()
     private lazy var coordinator: NSPersistentStoreCoordinator = {
-        //guard let modelUrl = NSBundle(forClass: self.dynamicType).URLForResource(self.modelName, withExtension: "momd"),
         guard let modelUrl = NSBundle.mainBundle().URLForResource(self.modelName, withExtension: "momd"),
             let model = NSManagedObjectModel(contentsOfURL: modelUrl) else {
                 fatalError("Couldn't create model")
@@ -82,10 +81,10 @@ public class BBLPersistence: NSObject {
     }
     
     // MARK: - Notification handlers
-    private func contextSaved(notification: NSNotification) {
+    func contextSaved(notification: NSNotification) {
         if let savedContext = notification.object as? NSManagedObjectContext {
             for context in contexts {
-                if context == savedContext {
+                if context != savedContext {
                     context.performBlock {
                         if let updated = notification.userInfo?[NSUpdatedObjectsKey] as? [NSManagedObject] {
                             for object in updated { _ = try? context.existingObjectWithID(object.objectID) }

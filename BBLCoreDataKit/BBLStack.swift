@@ -10,13 +10,19 @@ import Foundation
 import CoreData
 
 // MARK: - Protocols
-public protocol BBLStack {
+public protocol BBLStackProto {
+    init(concurrencyType: NSManagedObjectContextConcurrencyType)
+}
+
+public protocol BBLStack: BBLStackProto {
+    typealias T: BBLStackProto
+    
     // Static
     static var persistence: BBLPersistence { get set }
-    static var uiStack: BBLStack? { get set }
-    static var modelStack: BBLStack? { get set }
-    static func stackWithUIContext() -> BBLStack
-    static func stackWithModelContext() -> BBLStack
+    static var uiStack: T? { get set }
+    static var modelStack: T? { get set }
+    static func stackWithUIContext() -> T
+    static func stackWithModelContext() -> T
     
     // Instance
     init()
@@ -28,16 +34,16 @@ public protocol BBLStack {
 // MARK: - Extensions
 public extension BBLStack {
     // Static
-    static func stackWithUIContext() -> BBLStack {
+    static func stackWithUIContext() -> T {
         if uiStack == nil {
-            uiStack = Self.init(concurrencyType: .MainQueueConcurrencyType)
+            uiStack = T.init(concurrencyType: .MainQueueConcurrencyType)
         }
         return uiStack!
     }
     
-    static func stackWithModelContext() -> BBLStack {
+    static func stackWithModelContext() -> T {
         if modelStack == nil {
-            modelStack = Self.init(concurrencyType: .PrivateQueueConcurrencyType)
+            modelStack = T.init(concurrencyType: .PrivateQueueConcurrencyType)
         }
         return modelStack!
     }
