@@ -10,45 +10,20 @@ import Foundation
 import CoreData
 
 // MARK: - Protocols
-public protocol BBLStackProto {
-    init(concurrencyType: NSManagedObjectContextConcurrencyType)
-}
-
-public protocol BBLStack: BBLStackProto {
-    typealias T: BBLStackProto
-    
+public protocol BBLStack {
     // Static
-    static var persistence: BBLPersistence { get set }
-    static var uiStack: T? { get set }
-    static var modelStack: T? { get set }
-    static func stackWithUIContext() -> T
-    static func stackWithModelContext() -> T
+    static var persistence: BBLPersistence { get }
     
     // Instance
     init()
     var context: NSManagedObjectContext! { get set }
     func performBlock(block: () -> Void)
     func performBlockAndWait(block: () -> Void)
+    func save(site: String)
 }
 
 // MARK: - Extensions
 public extension BBLStack {
-    // Static
-    static func stackWithUIContext() -> T {
-        if uiStack == nil {
-            uiStack = T.init(concurrencyType: .MainQueueConcurrencyType)
-        }
-        return uiStack!
-    }
-    
-    static func stackWithModelContext() -> T {
-        if modelStack == nil {
-            modelStack = T.init(concurrencyType: .PrivateQueueConcurrencyType)
-        }
-        return modelStack!
-    }
-    
-    // Instance
     init(concurrencyType: NSManagedObjectContextConcurrencyType) {
         self.init()
         self.context = Self.persistence.addContext(concurrencyType: concurrencyType)
@@ -56,6 +31,9 @@ public extension BBLStack {
     
     func performBlock(block: () -> Void) { context.performBlock(block) }
     func performBlockAndWait(block: () -> Void) { context.performBlockAndWait(block) }
+    func save(site: String) {
+        do { try context.save() }
+        catch let error as NSError { print("===> \(site) save error: \(error.localizedDescription)") }
+    }
 }
-
 

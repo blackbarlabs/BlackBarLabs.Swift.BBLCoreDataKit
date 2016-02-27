@@ -18,13 +18,11 @@ public protocol BBLCollection {
     
     func object(identifier identifier: NSUUID) -> T
     func object(idString idString: String) -> T
-    
     func frc(sortKey sortKey: String, ascending: Bool) -> NSFetchedResultsController
     func frc(sortKey sortKey: String, ascending: Bool, predicate: NSPredicate?) -> NSFetchedResultsController
     func frc(sortKey sortKey: String, ascending: Bool, predicate: NSPredicate?, sectionKeyPath: String?) -> NSFetchedResultsController
     func frc(sortDescriptors sortDescriptors: [NSSortDescriptor], predicate: NSPredicate?, sectionKeyPath: String?) -> NSFetchedResultsController
 }
-
 
 // MARK: - Extensions
 extension NSManagedObjectContext {
@@ -34,8 +32,14 @@ extension NSManagedObjectContext {
     }
 }
 
+public extension NSFetchedResultsController {
+    func fetch(site: String) {
+        do { try self.performFetch() }
+        catch let error as NSError { print("===> \(site) fetch error: \(error.localizedDescription)") }
+    }
+}
+
 public extension BBLCollection {
-    
     // Initializers
     init(context: NSManagedObjectContext) {
         self.init()
