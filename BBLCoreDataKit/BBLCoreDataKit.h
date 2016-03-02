@@ -6,7 +6,7 @@
 //  Copyright © 2016 Joel Perry. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <CoreData/CoreData.h>
 
 //! Project version number for BBLCoreDataKit.
 FOUNDATION_EXPORT double BBLCoreDataKitVersionNumber;
@@ -15,5 +15,4 @@ FOUNDATION_EXPORT double BBLCoreDataKitVersionNumber;
 FOUNDATION_EXPORT const unsigned char BBLCoreDataKitVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <BBLCoreDataKit/PublicHeader.h>
-
 
