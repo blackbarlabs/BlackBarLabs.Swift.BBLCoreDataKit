@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreData
 
 public class BBLPersistence: NSObject {
   
@@ -23,7 +24,7 @@ public class BBLPersistence: NSObject {
     
     let c = NSPersistentStoreCoordinator(managedObjectModel: model)
     self.configureSQLiteStore(c)
-    NSNotificationCenter.defaultCenter().addObserver(self, selector: "contextSaved:", name: NSManagedObjectContextDidSaveNotification, object: nil)
+    NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(contextSaved(_:)), name: NSManagedObjectContextDidSaveNotification, object: nil)
     return c
   }()
   
