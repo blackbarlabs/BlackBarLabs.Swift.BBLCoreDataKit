@@ -38,7 +38,7 @@ public class BBLPersistence: NSObject {
   
   public func addContext(concurrencyType concurrencyType: NSManagedObjectContextConcurrencyType) -> NSManagedObjectContext {
     let newContext = NSManagedObjectContext(concurrencyType: concurrencyType)
-    newContext.persistentStoreCoordinator = self.coordinator
+    newContext.persistentStoreCoordinator = coordinator
     if concurrencyType == .PrivateQueueConcurrencyType { newContext.undoManager = nil }
     contexts.append(newContext)
     return newContext

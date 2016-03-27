@@ -24,7 +24,7 @@ extension NSManagedObject {
 
 public extension BBLObject {
   var identifier: NSUUID {
-    get { return NSUUID(UUIDString: self.idString)! }
-    set { self.idString = newValue.UUIDString }
+    get { return NSUUID(UUIDString: idString)! }
+    set { idString = newValue.UUIDString }
   }
 }

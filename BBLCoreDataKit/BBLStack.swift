@@ -32,7 +32,7 @@ public extension BBLStack {
   func performBlock(block: () -> Void) { context.performBlock(block) }
   func performBlockAndWait(block: () -> Void) { context.performBlockAndWait(block) }
   func save(site: String) {
-    guard self.context.hasChanges else { return }
+    guard context.hasChanges else { return }
     do { try context.save() }
     catch let error as NSError { print("===> \(site) save error: \(error.localizedDescription)") }
   }
