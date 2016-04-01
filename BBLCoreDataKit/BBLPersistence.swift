@@ -33,7 +33,10 @@ public class BBLPersistence: NSObject {
         self.modelName = modelName
         self.storeName = storeName
         self.shouldKillStore = shouldKillStore
-        super.init()
+    }
+    
+    public convenience init(modelName: String, storeName: String) {
+        self.init(modelName: modelName, storeName: storeName, shouldKillStore: false)
     }
     
     public func addContext(concurrencyType concurrencyType: NSManagedObjectContextConcurrencyType) -> NSManagedObjectContext {
@@ -76,7 +79,7 @@ public class BBLPersistence: NSObject {
                 _ = try? fileManager.removeItemAtURL(storeUrl)
                 configureSQLiteStore(coordinator)
             } else {
-                fatalError("\(error.localizedDescription) creating store")
+                fatalError("Error creating store: \(error.localizedDescription)")
             }
         }
     }

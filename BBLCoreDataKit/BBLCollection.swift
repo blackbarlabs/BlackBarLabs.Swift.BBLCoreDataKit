@@ -18,10 +18,13 @@ public protocol BBLCollection {
     
     func object(identifier identifier: NSUUID) -> T
     func object(idString idString: String) -> T
+    
     func frc(sortKey sortKey: String, ascending: Bool) -> NSFetchedResultsController
     func frc(sortKey sortKey: String, ascending: Bool, predicate: NSPredicate?) -> NSFetchedResultsController
     func frc(sortKey sortKey: String, ascending: Bool, predicate: NSPredicate?, sectionKeyPath: String?) -> NSFetchedResultsController
     func frc(sortDescriptors sortDescriptors: [NSSortDescriptor], predicate: NSPredicate?, sectionKeyPath: String?) -> NSFetchedResultsController
+    
+    func allObjects() -> NSFetchedResultsController
 }
 
 // MARK: - Extensions
@@ -45,9 +48,10 @@ public extension BBLCollection {
         self.context = context
     }
     
+    // Objects
     func object(identifier identifier: NSUUID) -> T {
         let request = NSFetchRequest(entityName: T.entityName)
-        request.predicate = NSPredicate(format: "idString = %@", identifier.UUIDString)
+        request.predicate = NSPredicate(format: "idString == %@", identifier.UUIDString)
         
         if let object = try! context.executeFetchRequest(request).first as? T {
             return object
@@ -60,7 +64,7 @@ public extension BBLCollection {
     
     func object(idString idString: String) -> T {
         let request = NSFetchRequest(entityName: T.entityName)
-        request.predicate = NSPredicate(format: "idString = %@", idString)
+        request.predicate = NSPredicate(format: "idString == %@", idString)
         
         if let object = try! context.executeFetchRequest(request).first as? T {
             return object
@@ -92,6 +96,9 @@ public extension BBLCollection {
         let frc = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: sectionKeyPath, cacheName: nil)
         return frc
     }
+    
+    // Default FetchedResultsController
+    func allObjects() -> NSFetchedResultsController {
+        return self.frc(sortKey: "idString", ascending: true)
+    }
 }
-
-

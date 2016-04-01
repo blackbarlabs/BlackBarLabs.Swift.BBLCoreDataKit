@@ -16,7 +16,7 @@ import CoreData
 
 // MARK: - Extensions
 extension NSManagedObject {
-    class var entityName : String {
+    static var entityName : String {
         let components = NSStringFromClass(self).componentsSeparatedByString(".")
         return components[1]
     }
