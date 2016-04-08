@@ -9,8 +9,9 @@
 import Foundation
 import CoreData
 
-// MARK: - Protocols
+// MARK: - BBLStack Protocol
 public protocol BBLStack {
+    
     // Static
     static var persistence: BBLPersistence { get }
     

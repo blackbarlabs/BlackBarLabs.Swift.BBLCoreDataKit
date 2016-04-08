@@ -29,14 +29,18 @@ public class BBLPersistence: NSObject {
     }()
     
     // MARK: - Public
-    public init(modelName: String, storeName: String, shouldKillStore: Bool) {
-        self.modelName = modelName
-        self.storeName = storeName
-        self.shouldKillStore = shouldKillStore
+    public convenience init(modelName: String) {
+        self.init(modelName: modelName, storeName: modelName)
     }
     
     public convenience init(modelName: String, storeName: String) {
         self.init(modelName: modelName, storeName: storeName, shouldKillStore: false)
+    }
+    
+    public init(modelName: String, storeName: String, shouldKillStore: Bool) {
+        self.modelName = modelName
+        self.storeName = storeName
+        self.shouldKillStore = shouldKillStore
     }
     
     public func addContext(concurrencyType concurrencyType: NSManagedObjectContextConcurrencyType) -> NSManagedObjectContext {

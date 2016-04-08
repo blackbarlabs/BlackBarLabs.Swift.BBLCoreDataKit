@@ -9,22 +9,21 @@
 import Foundation
 import CoreData
 
-// MARK: - Protocols
+// MARK: - BBLCollection Protocol
 public protocol BBLCollection {
-    associatedtype T: NSManagedObject, BBLObject
+    associatedtype Object: NSManagedObject, BBLObject
     var context: NSManagedObjectContext! { get set }
+    var allObjects: NSFetchedResultsController { get }
     
     init()
     
-    func object(identifier identifier: NSUUID) -> T
-    func object(idString idString: String) -> T
+    func object(identifier identifier: NSUUID) -> Object
+    func object(idString idString: String) -> Object
     
     func frc(sortKey sortKey: String, ascending: Bool) -> NSFetchedResultsController
     func frc(sortKey sortKey: String, ascending: Bool, predicate: NSPredicate?) -> NSFetchedResultsController
     func frc(sortKey sortKey: String, ascending: Bool, predicate: NSPredicate?, sectionKeyPath: String?) -> NSFetchedResultsController
     func frc(sortDescriptors sortDescriptors: [NSSortDescriptor], predicate: NSPredicate?, sectionKeyPath: String?) -> NSFetchedResultsController
-    
-    func allObjects() -> NSFetchedResultsController
 }
 
 // MARK: - Extensions
@@ -42,6 +41,7 @@ public extension NSFetchedResultsController {
 }
 
 public extension BBLCollection {
+    
     // Initializers
     init(context: NSManagedObjectContext) {
         self.init()
@@ -49,27 +49,27 @@ public extension BBLCollection {
     }
     
     // Objects
-    func object(identifier identifier: NSUUID) -> T {
-        let request = NSFetchRequest(entityName: T.entityName)
+    func object(identifier identifier: NSUUID) -> Object {
+        let request = NSFetchRequest(entityName: Object.entityName)
         request.predicate = NSPredicate(format: "idString == %@", identifier.UUIDString)
         
-        if let object = try! context.executeFetchRequest(request).first as? T {
+        if let object = try! context.executeFetchRequest(request).first as? Object {
             return object
         } else {
-            let newObject = context.insert(T)
+            let newObject = context.insert(Object)
             newObject.idString = identifier.UUIDString
             return newObject
         }
     }
     
-    func object(idString idString: String) -> T {
-        let request = NSFetchRequest(entityName: T.entityName)
+    func object(idString idString: String) -> Object {
+        let request = NSFetchRequest(entityName: Object.entityName)
         request.predicate = NSPredicate(format: "idString == %@", idString)
         
-        if let object = try! context.executeFetchRequest(request).first as? T {
+        if let object = try! context.executeFetchRequest(request).first as? Object {
             return object
         } else {
-            let newObject = context.insert(T)
+            let newObject = context.insert(Object)
             newObject.idString = idString
             return newObject
         }
@@ -90,7 +90,7 @@ public extension BBLCollection {
     }
     
     func frc(sortDescriptors sortDescriptors: [NSSortDescriptor], predicate: NSPredicate?, sectionKeyPath: String?) -> NSFetchedResultsController {
-        let fetchRequest = NSFetchRequest(entityName: T.entityName)
+        let fetchRequest = NSFetchRequest(entityName: Object.entityName)
         fetchRequest.sortDescriptors = sortDescriptors
         fetchRequest.predicate = predicate
         let frc = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: sectionKeyPath, cacheName: nil)
@@ -98,7 +98,7 @@ public extension BBLCollection {
     }
     
     // Default FetchedResultsController
-    func allObjects() -> NSFetchedResultsController {
+    var allObjects: NSFetchedResultsController {
         return self.frc(sortKey: "idString", ascending: true)
     }
 }

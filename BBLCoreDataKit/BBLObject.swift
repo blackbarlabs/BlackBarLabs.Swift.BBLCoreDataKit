@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-// MARK: - Protocols
+// MARK: - BBLObject Protocol
 @objc public protocol BBLObject {
     var idString: String { get set }
 }
