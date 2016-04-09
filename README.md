@@ -3,10 +3,10 @@ BBLCoreDataKit is a Swift framework for quickly setting up Core Data implementat
 
 ## Overview
 
-* BBLCoreDataKit is centered around the concept of a Stack, an object that implements the BBLStack protocol. Each instance of a Stack encapsulates a persistence layer (in the form of a BBLPersistence class), a single NSManagedObjectContext, and collections of NSManagedObjects in that context.
-* A Collection conforms to the BBLCollection protocol and allows for the creation, management, and fetching of a single NSManagedObject subclass.
-* NSManagedObject subclasses conform to the BBLObject protocol, which requires an `idString: String` property in order to uniquely identify each object instance.
-* BBLPersistence is designed so that NSManagedObjectContexts share a single NSPersistentStoreCoordinator. Changes in one context are propogated to the others by the `mergeChangesFromContextDidSaveNotification` function.
+* BBLCoreDataKit is centered around the concept of a Stack, an object that adopts the BBLStack protocol. Each instance of a Stack encapsulates a persistence layer (in the form of a BBLPersistence class), a single NSManagedObjectContext, and collections of NSManagedObjects in that context.
+* A Collection adopts the BBLCollection protocol and allows for the creation, management, and fetching of a single NSManagedObject subclass.
+* NSManagedObject subclasses adopt the BBLObject protocol, which requires an `idString: String` property in order to uniquely identify each object instance.
+* BBLPersistence is designed so that NSManagedObjectContexts share a single NSPersistentStoreCoordinator. Changes in one context are propagated to the others by the `mergeChangesFromContextDidSaveNotification` function.
 
 ## Sample Implementations
 ### Stack
@@ -38,9 +38,9 @@ final class MyStack: BBLStack {
     }()
 }
 ```
-* Set up shared persistence by providing the name of your Core Data Model.
+* Set up shared persistence by providing (at a minimum) the name of your Core Data Model.
 * Use static properties to hold your Stack instances, which you configure with a NSManagedObjectContextConcurrencyType.
-* Use lazy variables to refer to Object Collections for each of your NSManagedObject subclasses.
+* Use lazy variables to refer to Collections for each of your NSManagedObject subclasses.
 
 ### Collection
 ```
@@ -70,7 +70,7 @@ class MyObject: NSManagedObject, BBLObject {
     
 }
 ```
-* In the NSManagedObject subclass, conform to the BBLObject protocol. This requires a conforming subclass to contain an `idString: String` property.
+* In the NSManagedObject subclass, adopt the BBLObject protocol. This requires a conforming subclass to contain an `idString: String` property.
 
 ### Usage
 ```
@@ -89,3 +89,5 @@ let frc = mainStack.myObjects.allObjects
 frc.fetch("testMerge")
 let objects = frc.fetchedObjects?.count
 ```
+* Common context operations, such as `performBlock`, `performBlockAndWait`, and `save` can be called directly from the Stack instance.
+* To aid in debugging, the `save` and `fetch` functions take a `site` parameter, which can be used to identify which call caused an error.
