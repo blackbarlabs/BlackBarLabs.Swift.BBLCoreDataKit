@@ -11,16 +11,9 @@ import CoreData
 
 // MARK: - BBLStack Protocol
 public protocol BBLStack {
-    
-    // Static
     static var persistence: BBLPersistence { get }
-    
-    // Instance
-    init()
     var context: NSManagedObjectContext! { get set }
-    func performBlock(block: () -> Void)
-    func performBlockAndWait(block: () -> Void)
-    func save(site: String)
+    init()
 }
 
 // MARK: - Extensions
@@ -31,7 +24,9 @@ public extension BBLStack {
     }
     
     func performBlock(block: () -> Void) { context.performBlock(block) }
+    
     func performBlockAndWait(block: () -> Void) { context.performBlockAndWait(block) }
+    
     func save(site: String) {
         guard context.hasChanges else { return }
         do { try context.save() }

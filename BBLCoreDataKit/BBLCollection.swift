@@ -13,17 +13,7 @@ import CoreData
 public protocol BBLCollection {
     associatedtype Object: NSManagedObject, BBLObject
     var context: NSManagedObjectContext! { get set }
-    var allObjects: NSFetchedResultsController { get }
-    
     init()
-    
-    func object(identifier identifier: NSUUID) -> Object
-    func object(idString idString: String) -> Object
-    
-    func frc(sortKey sortKey: String, ascending: Bool) -> NSFetchedResultsController
-    func frc(sortKey sortKey: String, ascending: Bool, predicate: NSPredicate?) -> NSFetchedResultsController
-    func frc(sortKey sortKey: String, ascending: Bool, predicate: NSPredicate?, sectionKeyPath: String?) -> NSFetchedResultsController
-    func frc(sortDescriptors sortDescriptors: [NSSortDescriptor], predicate: NSPredicate?, sectionKeyPath: String?) -> NSFetchedResultsController
 }
 
 // MARK: - Extensions

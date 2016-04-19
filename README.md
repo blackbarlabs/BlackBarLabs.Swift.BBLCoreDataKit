@@ -4,7 +4,7 @@ BBLCoreDataKit is a Swift framework for quickly setting up Core Data implementat
 ## Overview
 
 * BBLCoreDataKit is centered around the concept of a Stack, an object that adopts the BBLStack protocol. Each instance of a Stack encapsulates a persistence layer (in the form of a BBLPersistence class), a single NSManagedObjectContext, and collections of NSManagedObjects in that context.
-* A Collection adopts the BBLCollection protocol and allows for the creation, management, and fetching of a single NSManagedObject subclass.
+* A Collection adopts the BBLCollection protocol and allows for the creation, management, and fetching of a single NSManagedObject subclass within a single NSManagedObjectContext.
 * NSManagedObject subclasses adopt the BBLObject protocol, which requires an `idString: String` property in order to uniquely identify each object instance.
 * BBLPersistence is designed so that NSManagedObjectContexts share a single NSPersistentStoreCoordinator. Changes in one context are propagated to the others by the `mergeChangesFromContextDidSaveNotification` function.
 
