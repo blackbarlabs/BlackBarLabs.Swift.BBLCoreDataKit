@@ -66,20 +66,12 @@ public extension BBLCollection {
     }
     
     // FetchedResultsController constructors
-    func frc(sortKey sortKey: String, ascending: Bool) -> NSFetchedResultsController {
-        return frc(sortKey: sortKey, ascending: ascending, predicate: nil)
-    }
-    
-    func frc(sortKey sortKey: String, ascending: Bool, predicate: NSPredicate?) -> NSFetchedResultsController {
-        return frc(sortKey: sortKey, ascending: ascending, predicate: predicate, sectionKeyPath: nil)
-    }
-    
-    func frc(sortKey sortKey: String, ascending: Bool, predicate: NSPredicate?, sectionKeyPath: String?) -> NSFetchedResultsController {
+    func frc(sortKey sortKey: String = "idString", ascending: Bool = true, predicate: NSPredicate? = nil, sectionKeyPath: String? = nil) -> NSFetchedResultsController {
         let descriptor = NSSortDescriptor(key: sortKey, ascending: ascending)
         return frc(sortDescriptors: [ descriptor ], predicate: predicate, sectionKeyPath: sectionKeyPath)
     }
     
-    func frc(sortDescriptors sortDescriptors: [NSSortDescriptor], predicate: NSPredicate?, sectionKeyPath: String?) -> NSFetchedResultsController {
+    func frc(sortDescriptors sortDescriptors: [NSSortDescriptor], predicate: NSPredicate? = nil, sectionKeyPath: String? = nil) -> NSFetchedResultsController {
         let fetchRequest = NSFetchRequest(entityName: Object.entityName)
         fetchRequest.sortDescriptors = sortDescriptors
         fetchRequest.predicate = predicate
@@ -89,6 +81,6 @@ public extension BBLCollection {
     
     // Default FetchedResultsController
     var allObjects: NSFetchedResultsController {
-        return self.frc(sortKey: "idString", ascending: true)
+        return frc()
     }
 }
