@@ -26,7 +26,7 @@ extension NSManagedObjectContext {
 public extension NSFetchedResultsController {
     func fetch(site: String) {
         do { try self.performFetch() }
-        catch let error as NSError { print("===> \(site) fetch error: \(error.localizedDescription)") }
+        catch let error as NSError { NSLog("===> %@ save error: %@", site, error.localizedDescription) }
     }
 }
 

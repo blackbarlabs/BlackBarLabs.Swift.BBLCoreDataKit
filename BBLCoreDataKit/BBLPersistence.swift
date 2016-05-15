@@ -70,16 +70,17 @@ public class BBLPersistence: NSObject {
             try coordinator.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: storeUrl, options: options)
         }
         catch let error as NSError {
-            if fileManager.fileExistsAtPath(storeUrl.path!) &&
-                (error.code == NSMigrationError ||
-                    error.code == NSMigrationCancelledError ||
-                    error.code == NSMigrationMissingSourceModelError ||
-                    error.code == NSMigrationMissingMappingModelError ||
-                    error.code == NSMigrationManagerSourceStoreError ||
-                    error.code == NSMigrationManagerDestinationStoreError ||
-                    error.code == NSEntityMigrationPolicyError ||
-                    error.code == NSInferredMappingModelError ||
-                    error.code == NSExternalRecordImportError) {
+            let errorCodes = [ NSMigrationError,
+                               NSMigrationCancelledError,
+                               NSMigrationMissingSourceModelError,
+                               NSMigrationMissingMappingModelError,
+                               NSMigrationManagerSourceStoreError,
+                               NSMigrationManagerDestinationStoreError,
+                               NSEntityMigrationPolicyError,
+                               NSInferredMappingModelError,
+                               NSExternalRecordImportError ]
+            
+            if fileManager.fileExistsAtPath(storeUrl.path!) && errorCodes.contains(error.code) {
                 _ = try? fileManager.removeItemAtURL(storeUrl)
                 configureSQLiteStore(coordinator)
             } else {
@@ -91,14 +92,14 @@ public class BBLPersistence: NSObject {
     // MARK: - Notification handlers
     func contextSaved(notification: NSNotification) {
         if let savedContext = notification.object as? NSManagedObjectContext {
-            for context in contexts {
-                if context != savedContext {
-                    context.performBlock {
-                        if let updated = notification.userInfo?[NSUpdatedObjectsKey] as? [NSManagedObject] {
-                            for object in updated { _ = try? context.existingObjectWithID(object.objectID) }
-                        }
-                        context.mergeChangesFromContextDidSaveNotification(notification)
+            let otherContexts = contexts.filter { $0 != savedContext }
+            for context in otherContexts {
+                context.performBlock {
+                    if let updated = notification.userInfo?[NSUpdatedObjectsKey] as? [NSManagedObject] {
+                        for object in updated {
+                            _ = try? context.existingObjectWithID(object.objectID) }
                     }
+                    context.mergeChangesFromContextDidSaveNotification(notification)
                 }
             }
         }

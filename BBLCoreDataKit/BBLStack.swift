@@ -30,7 +30,7 @@ public extension BBLStack {
     func save(site: String) {
         guard context.hasChanges else { return }
         do { try context.save() }
-        catch let error as NSError { print("===> \(site) save error: \(error.localizedDescription)") }
+        catch let error as NSError { NSLog("===> %@ save error: %@", site, error.localizedDescription) }
     }
 }
 
