@@ -40,7 +40,7 @@ public extension BBLCollection {
     
     // Objects
     func object(identifier identifier: NSUUID) -> Object {
-        let request = NSFetchRequest(entityName: Object.entityName)
+        let request = NSFetchRequest(entityName: entityName)
         request.predicate = NSPredicate(format: "idString == %@", identifier.UUIDString)
         
         if let object = try! context.executeFetchRequest(request).first as? Object {
@@ -53,7 +53,7 @@ public extension BBLCollection {
     }
     
     func object(idString idString: String) -> Object {
-        let request = NSFetchRequest(entityName: Object.entityName)
+        let request = NSFetchRequest(entityName: entityName)
         request.predicate = NSPredicate(format: "idString == %@", idString)
         
         if let object = try! context.executeFetchRequest(request).first as? Object {
@@ -65,6 +65,8 @@ public extension BBLCollection {
         }
     }
     
+    var entityName: String { return Object.entityName }
+    
     // FetchedResultsController constructors
     func frc(sortKey sortKey: String = "idString", ascending: Bool = true, predicate: NSPredicate? = nil, sectionKeyPath: String? = nil) -> NSFetchedResultsController {
         let descriptor = NSSortDescriptor(key: sortKey, ascending: ascending)
@@ -72,7 +74,7 @@ public extension BBLCollection {
     }
     
     func frc(sortDescriptors sortDescriptors: [NSSortDescriptor], predicate: NSPredicate? = nil, sectionKeyPath: String? = nil) -> NSFetchedResultsController {
-        let fetchRequest = NSFetchRequest(entityName: Object.entityName)
+        let fetchRequest = NSFetchRequest(entityName: entityName)
         fetchRequest.sortDescriptors = sortDescriptors
         fetchRequest.predicate = predicate
         let frc = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: sectionKeyPath, cacheName: nil)
