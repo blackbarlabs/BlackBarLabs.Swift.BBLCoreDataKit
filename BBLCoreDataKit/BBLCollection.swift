@@ -82,7 +82,7 @@ public extension BBLCollection {
     }
     
     // Default FetchedResultsController
-    var allObjects: NSFetchedResultsController {
+    func allObjects() -> NSFetchedResultsController {
         return frc()
     }
 }
