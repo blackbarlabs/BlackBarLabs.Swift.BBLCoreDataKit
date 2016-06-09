@@ -43,9 +43,10 @@ public class BBLPersistence: NSObject {
         self.shouldKillStore = shouldKillStore
     }
     
-    public func addContext(concurrencyType concurrencyType: NSManagedObjectContextConcurrencyType) -> NSManagedObjectContext {
+    public func addContext(concurrencyType concurrencyType: NSManagedObjectContextConcurrencyType, mergePolicy: AnyObject) -> NSManagedObjectContext {
         let newContext = NSManagedObjectContext(concurrencyType: concurrencyType)
         newContext.persistentStoreCoordinator = coordinator
+        newContext.mergePolicy = mergePolicy
         if concurrencyType == .PrivateQueueConcurrencyType { newContext.undoManager = nil }
         contexts.append(newContext)
         return newContext

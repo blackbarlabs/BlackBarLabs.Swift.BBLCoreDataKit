@@ -18,9 +18,9 @@ public protocol BBLStack {
 
 // MARK: - Extensions
 public extension BBLStack {
-    init(concurrencyType: NSManagedObjectContextConcurrencyType) {
+    init(concurrencyType: NSManagedObjectContextConcurrencyType, mergePolicy: AnyObject = NSErrorMergePolicy) {
         self.init()
-        self.context = Self.persistence.addContext(concurrencyType: concurrencyType)
+        self.context = Self.persistence.addContext(concurrencyType: concurrencyType, mergePolicy: mergePolicy)
     }
     
     func performBlock(block: () -> Void) { context.performBlock(block) }
