@@ -98,7 +98,8 @@ public class BBLPersistence: NSObject {
                 context.performBlock {
                     if let updated = notification.userInfo?[NSUpdatedObjectsKey] as? [NSManagedObject] {
                         for object in updated {
-                            _ = try? context.existingObjectWithID(object.objectID) }
+                            context.objectWithID(object.objectID).willAccessValueForKey(nil)
+                        }
                     }
                     context.mergeChangesFromContextDidSaveNotification(notification)
                 }
