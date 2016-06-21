@@ -96,12 +96,14 @@ public class BBLPersistence: NSObject {
             let otherContexts = contexts.filter { $0 != savedContext }
             for context in otherContexts {
                 context.performBlock {
-                    if let updated = notification.userInfo?[NSUpdatedObjectsKey] as? [NSManagedObject] {
-                        for object in updated {
-                            context.objectWithID(object.objectID).willAccessValueForKey(nil)
+                    if let updated = notification.userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject> {
+                        context.performBlock {
+                            updated.forEach { object in
+                                context.objectWithID(object.objectID).willAccessValueForKey(nil)
+                            }
+                            context.mergeChangesFromContextDidSaveNotification(notification)
                         }
                     }
-                    context.mergeChangesFromContextDidSaveNotification(notification)
                 }
             }
         }
