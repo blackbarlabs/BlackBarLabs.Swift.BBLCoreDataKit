@@ -17,14 +17,14 @@ import CoreData
 // MARK: - Extensions
 extension NSManagedObject {
     static var entityName : String {
-        let components = NSStringFromClass(self).componentsSeparatedByString(".")
+        let components = NSStringFromClass(self).components(separatedBy: ".")
         return components[1]
     }
 }
 
 public extension BBLObject {
-    var identifier: NSUUID {
-        get { return NSUUID(UUIDString: idString)! }
-        set { idString = newValue.UUIDString }
+    var identifier: UUID {
+        get { return UUID(uuidString: idString)! }
+        set { idString = newValue.uuidString }
     }
 }

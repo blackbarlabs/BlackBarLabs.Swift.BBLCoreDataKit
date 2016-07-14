@@ -23,11 +23,11 @@ public extension BBLStack {
         self.context = Self.persistence.addContext(concurrencyType: concurrencyType, mergePolicy: mergePolicy)
     }
     
-    func performBlock(block: () -> Void) { context.performBlock(block) }
+    func performBlock(_ block: () -> Void) { context.perform(block) }
     
-    func performBlockAndWait(block: () -> Void) { context.performBlockAndWait(block) }
+    func performBlockAndWait(_ block: () -> Void) { context.performAndWait(block) }
     
-    func save(site: String) {
+    func save(_ site: String) {
         guard context.hasChanges else { return }
         do { try context.save() }
         catch let error as NSError { NSLog("===> %@ save error: %@", site, error.localizedDescription) }

@@ -17,14 +17,14 @@ public class BBLPersistence: NSObject {
     private let shouldKillStore: Bool
     private var contexts = [NSManagedObjectContext]()
     private lazy var coordinator: NSPersistentStoreCoordinator = {
-        guard let modelUrl = NSBundle.mainBundle().URLForResource(self.modelName, withExtension: "momd"),
-            let model = NSManagedObjectModel(contentsOfURL: modelUrl) else {
+        guard let modelUrl = Bundle.main.urlForResource(self.modelName, withExtension: "momd"),
+            let model = NSManagedObjectModel(contentsOf: modelUrl) else {
                 fatalError("Couldn't create model")
         }
         
         let c = NSPersistentStoreCoordinator(managedObjectModel: model)
         self.configureSQLiteStore(c)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(contextSaved(_:)), name: NSManagedObjectContextDidSaveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(contextSaved(_:)), name: NSNotification.Name.NSManagedObjectContextDidSave, object: nil)
         return c
     }()
     
@@ -43,31 +43,32 @@ public class BBLPersistence: NSObject {
         self.shouldKillStore = shouldKillStore
     }
     
-    public func addContext(concurrencyType concurrencyType: NSManagedObjectContextConcurrencyType, mergePolicy: AnyObject) -> NSManagedObjectContext {
+    public func addContext(concurrencyType: NSManagedObjectContextConcurrencyType, mergePolicy: AnyObject) -> NSManagedObjectContext {
         let newContext = NSManagedObjectContext(concurrencyType: concurrencyType)
         newContext.persistentStoreCoordinator = coordinator
         newContext.mergePolicy = mergePolicy
-        if concurrencyType == .PrivateQueueConcurrencyType { newContext.undoManager = nil }
+        if concurrencyType == .privateQueueConcurrencyType { newContext.undoManager = nil }
         contexts.append(newContext)
         return newContext
     }
     
     // MARK: - Private
-    private func configureSQLiteStore(coordinator: NSPersistentStoreCoordinator) {
+    private func configureSQLiteStore(_ coordinator: NSPersistentStoreCoordinator) {
         let options = [ NSMigratePersistentStoresAutomaticallyOption : true,
                         NSInferMappingModelAutomaticallyOption : true,
                         NSSQLitePragmasOption : [ "journalMode" : "DELETE"] ]
         
-        let fileManager = NSFileManager.defaultManager()
-        guard let documentsUrl = try? fileManager.URLForDirectory(.DocumentDirectory, inDomain: .UserDomainMask, appropriateForURL: nil, create: false), storeUrl = documentsUrl.URLByAppendingPathComponent(storeName + ".sqlite") else {
+        let fileManager = FileManager.default
+        guard let documentsUrl = try? fileManager.urlForDirectory(.documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false), storeUrl = try? documentsUrl.appendingPathComponent(storeName + ".sqlite") else {
             fatalError("Couldn't create store URL")
         }
+        
         print(storeUrl)
         
-        if shouldKillStore { _ = try? fileManager.removeItemAtURL(storeUrl) }
+        if shouldKillStore { _ = try? fileManager.removeItem(at: storeUrl) }
         
         do {
-            try coordinator.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: storeUrl, options: options)
+            try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: storeUrl, options: options)
         }
         catch let error as NSError {
             let errorCodes = [ NSMigrationError,
@@ -80,8 +81,8 @@ public class BBLPersistence: NSObject {
                                NSInferredMappingModelError,
                                NSExternalRecordImportError ]
             
-            if fileManager.fileExistsAtPath(storeUrl.path!) && errorCodes.contains(error.code) {
-                _ = try? fileManager.removeItemAtURL(storeUrl)
+            if fileManager.fileExists(atPath: storeUrl.path!) && errorCodes.contains(error.code) {
+                _ = try? fileManager.removeItem(at: storeUrl)
                 configureSQLiteStore(coordinator)
             } else {
                 fatalError("Error creating store: \(error.localizedDescription)")
@@ -90,17 +91,17 @@ public class BBLPersistence: NSObject {
     }
     
     // MARK: - Notification handlers
-    func contextSaved(notification: NSNotification) {
+    func contextSaved(_ notification: Notification) {
         if let savedContext = notification.object as? NSManagedObjectContext {
             let otherContexts = contexts.filter { $0 != savedContext }
             for context in otherContexts {
-                context.performBlock {
-                    if let updated = notification.userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject> {
-                        context.performBlock {
+                context.perform {
+                    if let updated = (notification as NSNotification).userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject> {
+                        context.perform {
                             updated.forEach { object in
-                                context.objectWithID(object.objectID).willAccessValueForKey(nil)
+                                context.object(with: object.objectID).willAccessValue(forKey: nil)
                             }
-                            context.mergeChangesFromContextDidSaveNotification(notification)
+                            context.mergeChanges(fromContextDidSave: notification)
                         }
                     }
                 }
