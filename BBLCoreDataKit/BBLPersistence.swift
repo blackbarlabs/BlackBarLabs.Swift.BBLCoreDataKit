@@ -59,7 +59,7 @@ public class BBLPersistence: NSObject {
                         NSSQLitePragmasOption : [ "journalMode" : "DELETE"] ]
         
         let fileManager = FileManager.default
-        guard let documentsUrl = try? fileManager.urlForDirectory(.documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false), storeUrl = try? documentsUrl.appendingPathComponent(storeName + ".sqlite") else {
+        guard let documentsUrl = try? fileManager.urlForDirectory(.documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false), let storeUrl = try? documentsUrl.appendingPathComponent(storeName + ".sqlite") else {
             fatalError("Couldn't create store URL")
         }
         
