@@ -41,7 +41,7 @@ public extension BBLCollection {
     // Objects
     func object(identifier: UUID) -> Object {
         let request = NSFetchRequest<Object>(entityName: entityName)
-        request.predicate = Predicate(format: "idString == %@", identifier.uuidString)
+        request.predicate = NSPredicate(format: "idString == %@", identifier.uuidString)
         
         if let object = try! context.fetch(request).first {
             return object
@@ -54,7 +54,7 @@ public extension BBLCollection {
     
     func object(idString: String) -> Object {
         let request = NSFetchRequest<Object>(entityName: entityName)
-        request.predicate = Predicate(format: "idString == %@", idString)
+        request.predicate = NSPredicate(format: "idString == %@", idString)
         
         if let object = try! context.fetch(request).first {
             return object
@@ -68,12 +68,12 @@ public extension BBLCollection {
     var entityName: String { return Object.entityName }
     
     // FetchedResultsController constructors
-    func frc(sortKey: String = "idString", ascending: Bool = true, predicate: Predicate? = nil, sectionKeyPath: String? = nil) -> NSFetchedResultsController<Object> {
-        let descriptor = SortDescriptor(key: sortKey, ascending: ascending)
+    func frc(sortKey: String = "idString", ascending: Bool = true, predicate: NSPredicate? = nil, sectionKeyPath: String? = nil) -> NSFetchedResultsController<Object> {
+        let descriptor = NSSortDescriptor(key: sortKey, ascending: ascending)
         return frc(sortDescriptors: [ descriptor ], predicate: predicate, sectionKeyPath: sectionKeyPath)
     }
     
-    func frc(sortDescriptors: [SortDescriptor], predicate: Predicate? = nil, sectionKeyPath: String? = nil) -> NSFetchedResultsController<Object> {
+    func frc(sortDescriptors: [NSSortDescriptor], predicate: NSPredicate? = nil, sectionKeyPath: String? = nil) -> NSFetchedResultsController<Object> {
         let fetchRequest = NSFetchRequest<Object>(entityName: entityName)
         fetchRequest.sortDescriptors = sortDescriptors
         fetchRequest.predicate = predicate

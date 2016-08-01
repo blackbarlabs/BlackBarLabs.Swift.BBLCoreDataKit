@@ -17,7 +17,7 @@ public class BBLPersistence: NSObject {
     private let shouldKillStore: Bool
     private var contexts = [NSManagedObjectContext]()
     private lazy var coordinator: NSPersistentStoreCoordinator = {
-        guard let modelUrl = Bundle.main.urlForResource(self.modelName, withExtension: "momd"),
+        guard let modelUrl = Bundle.main.url(forResource: self.modelName, withExtension: "momd"),
             let model = NSManagedObjectModel(contentsOf: modelUrl) else {
                 fatalError("Couldn't create model")
         }
@@ -59,10 +59,11 @@ public class BBLPersistence: NSObject {
                         NSSQLitePragmasOption : [ "journalMode" : "DELETE"] ]
         
         let fileManager = FileManager.default
-        guard let documentsUrl = try? fileManager.urlForDirectory(.documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false), let storeUrl = try? documentsUrl.appendingPathComponent(storeName + ".sqlite") else {
+        guard let documentsUrl = try? fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false) else {
             fatalError("Couldn't create store URL")
         }
         
+        let storeUrl = documentsUrl.appendingPathComponent(storeName + ".sqlite")
         print(storeUrl)
         
         if shouldKillStore { _ = try? fileManager.removeItem(at: storeUrl) }
@@ -81,7 +82,7 @@ public class BBLPersistence: NSObject {
                                NSInferredMappingModelError,
                                NSExternalRecordImportError ]
             
-            if fileManager.fileExists(atPath: storeUrl.path!) && errorCodes.contains(error.code) {
+            if fileManager.fileExists(atPath: storeUrl.path) && errorCodes.contains(error.code) {
                 _ = try? fileManager.removeItem(at: storeUrl)
                 configureSQLiteStore(coordinator)
             } else {
