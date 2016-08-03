@@ -85,4 +85,11 @@ public extension BBLCollection {
     func allObjects() -> NSFetchedResultsController<Object> {
         return frc()
     }
+    
+    // Operations
+    func deleteAll() {
+        let request = NSFetchRequest<Object>(entityName: entityName)
+        guard let fetched = try? context.fetch(request) else { return }
+        fetched.forEach { (object) in context.delete(object) }
+    }
 }
