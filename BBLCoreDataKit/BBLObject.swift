@@ -9,9 +9,13 @@
 import Foundation
 import CoreData
 
-// MARK: - BBLObject Protocol
-@objc public protocol BBLObject {
-    var idString: String { get set }
+public class BBLObject: NSManagedObject {
+    @NSManaged public var idString: String
+    
+    public var identifier: UUID {
+        get { return UUID(uuidString: idString)! }
+        set { idString = newValue.uuidString }
+    }
 }
 
 // MARK: - Extensions
@@ -22,9 +26,3 @@ extension NSManagedObject {
     }
 }
 
-public extension BBLObject {
-    var identifier: UUID {
-        get { return UUID(uuidString: idString)! }
-        set { idString = newValue.uuidString }
-    }
-}
