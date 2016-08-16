@@ -9,10 +9,10 @@
 import Foundation
 import CoreData
 
-public class BBLObject: NSManagedObject {
+open class BBLObject: NSManagedObject {
     @NSManaged public var idString: String
     
-    public var identifier: UUID {
+    open var identifier: UUID {
         get { return UUID(uuidString: idString)! }
         set { idString = newValue.uuidString }
     }

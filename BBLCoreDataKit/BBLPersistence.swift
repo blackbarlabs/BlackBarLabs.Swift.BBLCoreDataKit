@@ -54,7 +54,7 @@ public class BBLPersistence: NSObject {
     
     // MARK: - Private
     private func configureSQLiteStore(_ coordinator: NSPersistentStoreCoordinator) {
-        let options = [ NSMigratePersistentStoresAutomaticallyOption : true,
+        let options: [AnyHashable: Any] = [ NSMigratePersistentStoresAutomaticallyOption : true,
                         NSInferMappingModelAutomaticallyOption : true,
                         NSSQLitePragmasOption : [ "journalMode" : "DELETE"] ]
         

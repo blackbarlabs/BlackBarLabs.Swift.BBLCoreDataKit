@@ -23,9 +23,9 @@ public extension BBLStack {
         self.context = Self.persistence.addContext(concurrencyType: concurrencyType, mergePolicy: mergePolicy)
     }
     
-    func performBlock(_ block: () -> Void) { context.perform(block) }
+    func performBlock(_ block: @escaping () -> Void) { context.perform(block) }
     
-    func performBlockAndWait(_ block: () -> Void) { context.performAndWait(block) }
+    func performBlockAndWait(_ block: @escaping () -> Void) { context.performAndWait(block) }
     
     func save(_ site: String) {
         guard context.hasChanges else { return }

@@ -18,7 +18,7 @@ public protocol BBLCollection {
 
 // MARK: - Extensions
 extension NSManagedObjectContext {
-    func insert<T: NSManagedObject where T: BBLObject>(_ object: T.Type) -> T {
+    func insert<T: NSManagedObject>(_ object: T.Type) -> T where T: BBLObject {
         return NSEntityDescription.insertNewObject(forEntityName: object.entityName, into:self) as! T
     }
 }
