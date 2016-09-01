@@ -95,6 +95,7 @@ public class BBLPersistence: NSObject {
     func contextSaved(_ notification: Notification) {
         if let savedContext = notification.object as? NSManagedObjectContext {
             let otherContexts = contexts.filter { $0 != savedContext }
+                                        .filter { $0.persistentStoreCoordinator == savedContext.persistentStoreCoordinator }
             for context in otherContexts {
                 context.perform {
                     if let updated = (notification as NSNotification).userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject> {
