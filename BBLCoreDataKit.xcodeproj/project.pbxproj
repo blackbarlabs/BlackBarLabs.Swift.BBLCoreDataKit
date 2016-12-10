@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D11548D1DFB9FC20000185D /* BBLFetchedObjectController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D11548C1DFB9FC20000185D /* BBLFetchedObjectController.swift */; };
 		5D49A9331C80DC650068A16C /* BBLCoreDataKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D49A9321C80DC650068A16C /* BBLCoreDataKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5D49A93B1C80DCAF0068A16C /* BBLObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D49A93A1C80DCAF0068A16C /* BBLObject.swift */; };
 		5D49A93D1C80DCBD0068A16C /* BBLCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D49A93C1C80DCBD0068A16C /* BBLCollection.swift */; };
@@ -15,6 +16,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5D11548C1DFB9FC20000185D /* BBLFetchedObjectController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BBLFetchedObjectController.swift; sourceTree = "<group>"; };
 		5D49A92F1C80DC650068A16C /* BBLCoreDataKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BBLCoreDataKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D49A9321C80DC650068A16C /* BBLCoreDataKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BBLCoreDataKit.h; sourceTree = "<group>"; };
 		5D49A9341C80DC650068A16C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -56,6 +58,7 @@
 			children = (
 				5D49A9341C80DC650068A16C /* Info.plist */,
 				5D49A9321C80DC650068A16C /* BBLCoreDataKit.h */,
+				5D11548C1DFB9FC20000185D /* BBLFetchedObjectController.swift */,
 				5D49A93A1C80DCAF0068A16C /* BBLObject.swift */,
 				5D49A93C1C80DCBD0068A16C /* BBLCollection.swift */,
 				5D49A93E1C80DCC80068A16C /* BBLStack.swift */,
@@ -149,6 +152,7 @@
 				5D49A93D1C80DCBD0068A16C /* BBLCollection.swift in Sources */,
 				5D49A93F1C80DCC80068A16C /* BBLStack.swift in Sources */,
 				5D49A93B1C80DCAF0068A16C /* BBLObject.swift in Sources */,
+				5D11548D1DFB9FC20000185D /* BBLFetchedObjectController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
