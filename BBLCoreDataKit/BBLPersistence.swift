@@ -24,7 +24,9 @@ public class BBLPersistence: NSObject {
         
         let c = NSPersistentStoreCoordinator(managedObjectModel: model)
         self.configureSQLiteStore(c)
-        NotificationCenter.default.addObserver(self, selector: #selector(contextSaved(_:)), name: NSNotification.Name.NSManagedObjectContextDidSave, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(contextSaved(_:)),
+                                               name: Notification.Name.NSManagedObjectContextDidSave,
+                                               object: nil)
         return c
     }()
     
