@@ -15,7 +15,7 @@ public class BBLPersistence: NSObject {
     private let modelName: String
     private let storeName: String
     private let shouldKillStore: Bool
-    private var contexts = [NSManagedObjectContext]()
+    private var contexts = Set<NSManagedObjectContext>()
     private lazy var coordinator: NSPersistentStoreCoordinator = {
         guard let modelUrl = Bundle.main.url(forResource: self.modelName, withExtension: "momd"),
             let model = NSManagedObjectModel(contentsOf: modelUrl) else {
@@ -50,8 +50,14 @@ public class BBLPersistence: NSObject {
         newContext.persistentStoreCoordinator = coordinator
         newContext.mergePolicy = mergePolicy
         if concurrencyType == .privateQueueConcurrencyType { newContext.undoManager = nil }
-        contexts.append(newContext)
+        contexts.insert(newContext)
+        print("===> \(contexts.count) contexts on add")
         return newContext
+    }
+    
+    public func removeContext(_ context: NSManagedObjectContext) {
+        contexts.remove(context)
+        print("===> \(contexts.count) contexts on remove")
     }
     
     // MARK: - Private
@@ -102,7 +108,7 @@ public class BBLPersistence: NSObject {
                 context.perform {
                     if let updated = (notification as NSNotification).userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject> {
                         context.perform {
-                            updated.forEach { object in
+                            updated.forEach { (object) in
                                 context.object(with: object.objectID).willAccessValue(forKey: nil)
                             }
                             context.mergeChanges(fromContextDidSave: notification)
