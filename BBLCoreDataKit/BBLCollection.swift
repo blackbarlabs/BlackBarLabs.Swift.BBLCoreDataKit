@@ -23,12 +23,12 @@ extension NSManagedObjectContext {
     }
 }
 
-/*public extension NSFetchedResultsController {
-    func fetch(site: String) {
+public extension NSFetchedResultsController {
+    func fetch(_ site: String) {
         do { try self.performFetch() }
-        catch let error as NSError { NSLog("===> %@ save error: %@", site, error.localizedDescription) }
+        catch let error { NSLog("===> %@ fetch error: %@", site, error.localizedDescription) }
     }
-}*/
+}
 
 public extension BBLCollection {
     
@@ -39,12 +39,19 @@ public extension BBLCollection {
     }
     
     // Objects
+    func existingObject(identifier: UUID) -> Object? {
+        let request = NSFetchRequest<Object>(entityName: entityName)
+        request.predicate = NSPredicate(format: "idString == %@", identifier.uuidString)
+        guard let fetched = try? context.fetch(request) else { return nil }
+        return fetched.first
+    }
+    
     func object(identifier: UUID) -> Object {
         let request = NSFetchRequest<Object>(entityName: entityName)
         request.predicate = NSPredicate(format: "idString == %@", identifier.uuidString)
         
-        if let object = try! context.fetch(request).first {
-            return object
+        if let fetched = try? context.fetch(request), !fetched.isEmpty {
+            return fetched.first!
         } else {
             let newObject = context.insert(Object.self)
             newObject.idString = identifier.uuidString
@@ -56,8 +63,8 @@ public extension BBLCollection {
         let request = NSFetchRequest<Object>(entityName: entityName)
         request.predicate = NSPredicate(format: "idString == %@", idString)
         
-        if let object = try! context.fetch(request).first {
-            return object
+        if let fetched = try? context.fetch(request), !fetched.isEmpty {
+            return fetched.first!
         } else {
             let newObject = context.insert(Object.self)
             newObject.idString = idString
