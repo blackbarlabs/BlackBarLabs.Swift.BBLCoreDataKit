@@ -104,15 +104,15 @@ public class BBLPersistence: NSObject {
         if let savedContext = notification.object as? NSManagedObjectContext {
             let otherContexts = contexts.filter { $0 != savedContext }
                                         .filter { $0.persistentStoreCoordinator == savedContext.persistentStoreCoordinator }
-            for context in otherContexts {
+            
+            otherContexts.forEach { (context) in
                 context.perform {
                     if let updated = (notification as NSNotification).userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject> {
-                        context.perform {
-                            updated.forEach { (object) in
-                                context.object(with: object.objectID).willAccessValue(forKey: nil)
-                            }
-                            context.mergeChanges(fromContextDidSave: notification)
+                        updated.forEach { (object) in
+                            context.object(with: object.objectID).willAccessValue(forKey: nil)
                         }
+                        if context == nil { return }
+                        context.mergeChanges(fromContextDidSave: notification)
                     }
                 }
             }
