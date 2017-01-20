@@ -111,7 +111,6 @@ public class BBLPersistence: NSObject {
                         updated.forEach { (object) in
                             context.object(with: object.objectID).willAccessValue(forKey: nil)
                         }
-                        if context == nil { return }
                         context.mergeChanges(fromContextDidSave: notification)
                     }
                 }

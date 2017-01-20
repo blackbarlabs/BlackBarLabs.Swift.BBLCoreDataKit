@@ -96,6 +96,8 @@ public extension BBLCollection {
     // Operations
     func deleteAll() {
         let request = NSFetchRequest<Object>(entityName: entityName)
+        request.returnsObjectsAsFaults = false
+        request.includesPropertyValues = false
         guard let fetched = try? context.fetch(request) else { return }
         fetched.forEach { (object) in context.delete(object) }
     }
