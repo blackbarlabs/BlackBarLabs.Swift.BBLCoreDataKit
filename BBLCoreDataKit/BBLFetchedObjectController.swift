@@ -17,7 +17,7 @@ public protocol BBLFetchedObjectController: NSFetchedResultsControllerDelegate {
     
     var stack: ControllerStack { get }
     var controllers: [FRC] { get set }
-    var objectsInProgress: [ Int : Set<UUID> ] { get set }
+    var objectsInProgress: [ Int : Set<String> ] { get set }
     var fetchedObjectHandlers: [ Int : FetchedObjectHandler ] { get set }
     
     init(_ stack: ControllerStack)
@@ -28,7 +28,7 @@ public extension BBLFetchedObjectController {
     // MARK: Managed Controllers
     func addManagedFetchedResultController(_ frc: FRC, fetchedObjectHandler: @escaping FetchedObjectHandler) {
         if !controllers.contains(frc) { controllers.append(frc) }
-        if objectsInProgress[frc.hash] == nil { objectsInProgress[frc.hash] = Set<UUID>() }
+        if objectsInProgress[frc.hash] == nil { objectsInProgress[frc.hash] = Set<String>() }
         if fetchedObjectHandlers[frc.hash] == nil { fetchedObjectHandlers[frc.hash] = fetchedObjectHandler }
     }
     
@@ -53,18 +53,18 @@ public extension BBLFetchedObjectController {
     }
     
     // MARK: - Progress
-    func setUUID(_ uuid: UUID, inProgress: Bool, onFetchedResultsController frc: FRC) {
+    func setObjectId(_ idString: String, inProgress: Bool, onFetchedResultsController frc: FRC) {
         guard var progressSet = objectsInProgress[frc.hash] else { return }
         if inProgress {
-            progressSet.insert(uuid)
+            progressSet.insert(idString)
         } else {
-            progressSet.remove(uuid)
+            progressSet.remove(idString)
         }
         objectsInProgress[frc.hash] = progressSet
     }
     
     func objectIsInProgress(_ object: BBLObject, onFetchedResultsController frc: FRC) -> Bool {
         guard let progressSet = objectsInProgress[frc.hash] else { return false }
-        return progressSet.contains(object.identifier)
+        return progressSet.contains(object.idString)
     }
 }

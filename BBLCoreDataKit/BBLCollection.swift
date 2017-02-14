@@ -46,6 +46,13 @@ public extension BBLCollection {
         return fetched.first
     }
     
+    func existingObject(idString: String) -> Object? {
+        let request = NSFetchRequest<Object>(entityName: entityName)
+        request.predicate = NSPredicate(format: "idString == %@", idString)
+        guard let fetched = try? context.fetch(request) else { return nil }
+        return fetched.first
+    }
+    
     func object(identifier: UUID) -> Object {
         let request = NSFetchRequest<Object>(entityName: entityName)
         request.predicate = NSPredicate(format: "idString == %@", identifier.uuidString)
