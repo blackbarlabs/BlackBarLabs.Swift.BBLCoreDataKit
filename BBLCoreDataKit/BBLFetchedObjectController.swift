@@ -39,17 +39,19 @@ public extension BBLFetchedObjectController {
     }
     
     func startManagedControllers() {
-        controllers.forEach {
-            $0.delegate = self
-            $0.fetch("BBLFetchedObjectController.startManagedControllers()")
-            controllerDidChangeContent?($0)
+        stack.performBlock { [weak self] in
+            self?.controllers.forEach {
+                $0.delegate = self
+                $0.fetch("BBLFetchedObjectController.startManagedControllers()")
+                self?.controllerDidChangeContent?($0)
+            }
         }
     }
     
     func stopManagedControllers() {
+        fetchedObjectHandlers.removeAll()
         controllers.removeAll()
         objectsInProgress.removeAll()
-        fetchedObjectHandlers.removeAll()
     }
     
     // MARK: - Progress
@@ -63,8 +65,8 @@ public extension BBLFetchedObjectController {
         objectsInProgress[frc.hash] = progressSet
     }
     
-    func objectIsInProgress(_ object: BBLObject, onFetchedResultsController frc: FRC) -> Bool {
+    func objectIdIsInProgress(_ idString: String, onFetchedResultsController frc: FRC) -> Bool {
         guard let progressSet = objectsInProgress[frc.hash] else { return false }
-        return progressSet.contains(object.idString)
+        return progressSet.contains(idString)
     }
 }
