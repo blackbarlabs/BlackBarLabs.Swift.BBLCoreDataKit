@@ -27,6 +27,10 @@ public extension BBLStack {
         Self.persistence.removeContext(context)
     }
     
+    var model: NSManagedObjectModel {
+        return Self.persistence.model
+    }
+    
     func performBlock(_ block: @escaping () -> Void) { context.perform(block) }
     
     func performBlockAndWait(_ block: @escaping () -> Void) { context.performAndWait(block) }

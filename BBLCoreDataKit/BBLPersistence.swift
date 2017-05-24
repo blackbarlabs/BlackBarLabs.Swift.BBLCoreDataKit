@@ -22,6 +22,7 @@ public class BBLPersistence: NSObject {
                 fatalError("Couldn't create model")
         }
         
+        self.model = model
         let c = NSPersistentStoreCoordinator(managedObjectModel: model)
         self.configureSQLiteStore(c)
         NotificationCenter.default.addObserver(self, selector: #selector(contextSaved(_:)),
@@ -59,6 +60,8 @@ public class BBLPersistence: NSObject {
         contexts.remove(context)
         print("===> \(contexts.count) contexts on remove")
     }
+    
+    public var model: NSManagedObjectModel!
     
     // MARK: - Private
     private func configureSQLiteStore(_ coordinator: NSPersistentStoreCoordinator) {
