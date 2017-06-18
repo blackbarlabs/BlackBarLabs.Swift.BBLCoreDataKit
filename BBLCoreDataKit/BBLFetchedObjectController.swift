@@ -57,9 +57,11 @@ public extension BBLFetchedObjectController {
     }
     
     func clearManagedControllers() {
-        fetchedObjectHandlers.removeAll()
-        controllers.removeAll()
-        objectsInProgress.removeAll()
+        stack.performBlock { [weak self] in
+            self?.fetchedObjectHandlers.removeAll()
+            self?.controllers.removeAll()
+            self?.objectsInProgress.removeAll()
+        }
     }
     
     // MARK: - Progress
