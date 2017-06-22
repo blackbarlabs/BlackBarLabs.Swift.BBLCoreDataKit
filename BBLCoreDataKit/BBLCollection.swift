@@ -42,6 +42,8 @@ public extension BBLCollection {
     func existingObject(identifier: UUID) -> Object? {
         let request = NSFetchRequest<Object>(entityName: entityName)
         request.predicate = NSPredicate(format: "idString == %@", identifier.uuidString)
+        request.fetchLimit = 1
+        request.returnsObjectsAsFaults = false
         guard let fetched = try? context.fetch(request) else { return nil }
         return fetched.first
     }
@@ -49,6 +51,8 @@ public extension BBLCollection {
     func existingObject(idString: String) -> Object? {
         let request = NSFetchRequest<Object>(entityName: entityName)
         request.predicate = NSPredicate(format: "idString == %@", idString)
+        request.fetchLimit = 1
+        request.returnsObjectsAsFaults = false
         guard let fetched = try? context.fetch(request) else { return nil }
         return fetched.first
     }
@@ -56,6 +60,8 @@ public extension BBLCollection {
     func object(identifier: UUID) -> Object {
         let request = NSFetchRequest<Object>(entityName: entityName)
         request.predicate = NSPredicate(format: "idString == %@", identifier.uuidString)
+        request.fetchLimit = 1
+        request.returnsObjectsAsFaults = false
         
         if let fetched = try? context.fetch(request), !fetched.isEmpty {
             return fetched.first!
@@ -69,6 +75,8 @@ public extension BBLCollection {
     func object(idString: String) -> Object {
         let request = NSFetchRequest<Object>(entityName: entityName)
         request.predicate = NSPredicate(format: "idString == %@", idString)
+        request.fetchLimit = 1
+        request.returnsObjectsAsFaults = false
         
         if let fetched = try? context.fetch(request), !fetched.isEmpty {
             return fetched.first!
@@ -103,7 +111,6 @@ public extension BBLCollection {
     // Operations
     func deleteAll() {
         let request = NSFetchRequest<Object>(entityName: entityName)
-        request.returnsObjectsAsFaults = false
         request.includesPropertyValues = false
         guard let fetched = try? context.fetch(request) else { return }
         fetched.forEach { (object) in context.delete(object) }
