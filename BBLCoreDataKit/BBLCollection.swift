@@ -18,13 +18,13 @@ public protocol BBLCollection {
 
 // MARK: - Extensions
 extension NSManagedObjectContext {
-    func insert<T: NSManagedObject>(_ object: T.Type) -> T where T: BBLObject {
+    func insert<T>(_ object: T.Type) -> T where T: BBLObject {
         return NSEntityDescription.insertNewObject(forEntityName: object.entityName, into:self) as! T
     }
 }
 
 public extension NSFetchedResultsController {
-    func fetch(_ site: String) {
+    @objc func fetch(_ site: String) {
         do { try self.performFetch() }
         catch let error { NSLog("===> %@ fetch error: %@", site, error.localizedDescription) }
     }

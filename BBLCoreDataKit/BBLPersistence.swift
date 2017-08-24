@@ -103,7 +103,7 @@ public class BBLPersistence: NSObject {
     }
     
     // MARK: - Notification handlers
-    func contextSaved(_ notification: Notification) {
+    @objc func contextSaved(_ notification: Notification) {
         if let savedContext = notification.object as? NSManagedObjectContext {
             let otherContexts = contexts.filter { $0 != savedContext }
                                         .filter { $0.persistentStoreCoordinator == savedContext.persistentStoreCoordinator }
