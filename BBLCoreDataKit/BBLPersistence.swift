@@ -10,11 +10,16 @@ import Foundation
 import CoreData
 
 public class BBLPersistence: NSObject {
+    public enum StoreType {
+        case sqlite
+        case inMemory
+    }
     
     // MARK: - Properties
     private let modelName: String
     private let storeName: String
     private let shouldKillStore: Bool
+    private let storeType: StoreType
     private var contexts = Set<NSManagedObjectContext>()
     private lazy var coordinator: NSPersistentStoreCoordinator = {
         guard let modelUrl = Bundle.main.url(forResource: self.modelName, withExtension: "momd"),
@@ -24,7 +29,15 @@ public class BBLPersistence: NSObject {
         
         self.model = model
         let c = NSPersistentStoreCoordinator(managedObjectModel: model)
-        self.configureSQLiteStore(c)
+        
+        switch storeType {
+        case .sqlite:
+            self.configureSQLiteStore(c)
+            
+        case .inMemory:
+            self.configureInMemoryStore(c)
+        }
+        
         NotificationCenter.default.addObserver(self, selector: #selector(contextSaved(_:)),
                                                name: Notification.Name.NSManagedObjectContextDidSave,
                                                object: nil)
@@ -40,10 +53,15 @@ public class BBLPersistence: NSObject {
         self.init(modelName: modelName, storeName: storeName, shouldKillStore: false)
     }
     
-    public init(modelName: String, storeName: String, shouldKillStore: Bool) {
+    public convenience init(modelName: String, storeName: String, shouldKillStore: Bool) {
+        self.init(modelName: modelName, storeName: storeName, shouldKillStore: false, storeType: .sqlite)
+    }
+    
+    public init(modelName: String, storeName: String, shouldKillStore: Bool, storeType: StoreType) {
         self.modelName = modelName
         self.storeName = storeName
         self.shouldKillStore = shouldKillStore
+        self.storeType = storeType
     }
     
     public func addContext(concurrencyType: NSManagedObjectContextConcurrencyType, mergePolicy: AnyObject) -> NSManagedObjectContext {
@@ -99,6 +117,15 @@ public class BBLPersistence: NSObject {
             } else {
                 fatalError("Error creating store: \(error.localizedDescription)")
             }
+        }
+    }
+    
+    private func configureInMemoryStore(_ coordinator: NSPersistentStoreCoordinator) {
+        guard coordinator.persistentStores.isEmpty else { return }
+        do {
+            try coordinator.addPersistentStore(ofType: NSInMemoryStoreType, configurationName: nil, at: nil, options: nil)
+        } catch let error {
+            fatalError("Error creating store: \(error.localizedDescription)")
         }
     }
     
