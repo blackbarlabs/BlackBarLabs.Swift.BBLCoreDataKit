@@ -54,7 +54,7 @@ public class BBLPersistence: NSObject {
     }
     
     public convenience init(modelName: String, storeName: String, shouldKillStore: Bool) {
-        self.init(modelName: modelName, storeName: storeName, shouldKillStore: false, storeType: .sqlite)
+        self.init(modelName: modelName, storeName: storeName, shouldKillStore: shouldKillStore, storeType: .sqlite)
     }
     
     public init(modelName: String, storeName: String, shouldKillStore: Bool, storeType: StoreType) {
