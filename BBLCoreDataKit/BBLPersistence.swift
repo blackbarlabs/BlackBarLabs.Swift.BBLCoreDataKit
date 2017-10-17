@@ -74,6 +74,14 @@ public class BBLPersistence: NSObject {
         return newContext
     }
     
+    public func addChildContext(forContext parentContext: NSManagedObjectContext, concurrencyType: NSManagedObjectContextConcurrencyType, mergePolicy: AnyObject) -> NSManagedObjectContext {
+        let newContext = NSManagedObjectContext(concurrencyType: concurrencyType)
+        newContext.mergePolicy = mergePolicy
+        if concurrencyType == .privateQueueConcurrencyType { newContext.undoManager = nil }
+        newContext.parent = parentContext
+        return newContext
+    }
+    
     public func removeContext(_ context: NSManagedObjectContext) {
         contexts.remove(context)
         print("===> \(contexts.count) contexts on remove")
@@ -131,18 +139,17 @@ public class BBLPersistence: NSObject {
     
     // MARK: - Notification handlers
     @objc func contextSaved(_ notification: Notification) {
-        if let savedContext = notification.object as? NSManagedObjectContext {
-            let otherContexts = contexts.filter { $0 != savedContext }
-                                        .filter { $0.persistentStoreCoordinator == savedContext.persistentStoreCoordinator }
-            
-            otherContexts.forEach { (context) in
-                context.perform {
-                    if let updated = (notification as NSNotification).userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject> {
-                        updated.forEach { (object) in
-                            context.object(with: object.objectID).willAccessValue(forKey: nil)
-                        }
-                        context.mergeChanges(fromContextDidSave: notification)
+        guard let savedContext = notification.object as? NSManagedObjectContext, savedContext.parent == nil else { return }
+        let otherContexts = contexts.filter { $0 != savedContext }
+                                    .filter { $0.persistentStoreCoordinator == savedContext.persistentStoreCoordinator }
+        
+        otherContexts.forEach { (context) in
+            context.perform {
+                if let updated = (notification as NSNotification).userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject> {
+                    updated.forEach { (object) in
+                        context.object(with: object.objectID).willAccessValue(forKey: nil)
                     }
+                    context.mergeChanges(fromContextDidSave: notification)
                 }
             }
         }

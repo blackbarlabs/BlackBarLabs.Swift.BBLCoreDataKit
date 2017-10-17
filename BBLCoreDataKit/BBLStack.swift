@@ -23,6 +23,11 @@ public extension BBLStack {
         self.context = Self.persistence.addContext(concurrencyType: concurrencyType, mergePolicy: mergePolicy)
     }
     
+    init(parentStack: BBLStack, concurrencyType: NSManagedObjectContextConcurrencyType, mergePolicy: AnyObject = NSErrorMergePolicy) {
+        self.init()
+        self.context = Self.persistence.addChildContext(forContext: parentStack.context, concurrencyType: concurrencyType, mergePolicy: mergePolicy)
+    }
+    
     func deinitialize() {
         Self.persistence.removeContext(context)
     }
@@ -40,5 +45,6 @@ public extension BBLStack {
         do { try context.save() }
         catch let error as NSError { NSLog("===> %@ save error: %@", site, error.localizedDescription) }
     }
+
 }
 
