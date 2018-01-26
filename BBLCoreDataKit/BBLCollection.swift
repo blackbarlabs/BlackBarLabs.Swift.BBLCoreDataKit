@@ -12,7 +12,7 @@ import CoreData
 // MARK: - BBLCollection Protocol
 public protocol BBLCollection {
     associatedtype Object: BBLObject
-    weak var context: NSManagedObjectContext! { get set }
+    var context: NSManagedObjectContext! { get set }
     init()
 }
 
