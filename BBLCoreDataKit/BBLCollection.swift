@@ -90,7 +90,7 @@ public extension BBLCollection {
     var entityName: String { return Object.entityName }
     
     // FetchedResultsController constructors
-    func frc(sortKey: String = "idString", ascending: Bool = true, predicate: NSPredicate? = nil, sectionKeyPath: String? = nil) -> NSFetchedResultsController<Object> {
+    func frc(sortKey: String = #keyPath(BBLObject.idString), ascending: Bool = true, predicate: NSPredicate? = nil, sectionKeyPath: String? = nil) -> NSFetchedResultsController<Object> {
         let descriptor = NSSortDescriptor(key: sortKey, ascending: ascending)
         return frc(sortDescriptors: [ descriptor ], predicate: predicate, sectionKeyPath: sectionKeyPath)
     }
