@@ -26,13 +26,13 @@ public protocol BBLFetchedObjectController: NSFetchedResultsControllerDelegate {
 public extension BBLFetchedObjectController {
     
     // MARK: Managed Controllers
-    func addManagedFetchedResultController(_ frc: FRC, fetchedObjectHandler: @escaping FetchedObjectHandler) {
+    func addManagedController(_ frc: FRC, fetchedObjectHandler: @escaping FetchedObjectHandler) {
         if !controllers.contains(frc) { controllers.append(frc) }
         if objectsInProgress[frc.hash] == nil { objectsInProgress[frc.hash] = Set<String>() }
         if fetchedObjectHandlers[frc.hash] == nil { fetchedObjectHandlers[frc.hash] = fetchedObjectHandler }
     }
     
-    func removeManagedFetchedResultsController(_ frc: FRC) {
+    func removeManagedController(_ frc: FRC) {
         if let index = controllers.index(of: frc) { controllers.remove(at: index) }
         if objectsInProgress[frc.hash] != nil { objectsInProgress[frc.hash] = nil }
         if fetchedObjectHandlers[frc.hash] != nil { fetchedObjectHandlers[frc.hash] = nil }
