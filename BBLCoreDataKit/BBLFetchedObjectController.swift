@@ -40,10 +40,12 @@ public extension BBLFetchedObjectController {
     
     func startManagedControllers() {
         stack.performBlock { [weak self] in
-            self?.controllers.forEach {
-                $0.delegate = self
-                $0.fetch("BBLFetchedObjectController.startManagedControllers()")
-                self?.controllerDidChangeContent?($0)
+            self?.controllers.forEach { (controller) in
+                controller.delegate = self
+                controller.fetch("BBLFetchedObjectController.startManagedControllers()")
+                controller.fetchedObjects?.forEach { (object) in
+                    self?.controller?(controller, didChange: object, at: nil, for: .insert, newIndexPath: nil)
+                }
             }
         }
     }
