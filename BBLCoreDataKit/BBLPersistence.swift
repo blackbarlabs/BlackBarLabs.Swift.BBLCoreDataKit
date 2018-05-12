@@ -39,7 +39,7 @@ public class BBLPersistence: NSObject {
         }
         
         NotificationCenter.default.addObserver(self, selector: #selector(contextSaved(_:)),
-                                               name: Notification.Name.NSManagedObjectContextDidSave,
+                                               name: .NSManagedObjectContextDidSave,
                                                object: nil)
         return c
     }()
