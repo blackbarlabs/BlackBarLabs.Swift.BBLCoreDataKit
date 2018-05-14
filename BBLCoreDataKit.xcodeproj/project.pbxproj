@@ -13,7 +13,6 @@
 		5D49A93D1C80DCBD0068A16C /* BBLCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D49A93C1C80DCBD0068A16C /* BBLCollection.swift */; };
 		5D49A93F1C80DCC80068A16C /* BBLStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D49A93E1C80DCC80068A16C /* BBLStack.swift */; };
 		5D49A9411C80DCD50068A16C /* BBLPersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D49A9401C80DCD50068A16C /* BBLPersistence.swift */; };
-		5DEB28D21E2BD2AC00ACD840 /* BBLLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DEB28D11E2BD2AC00ACD840 /* BBLLogging.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,7 +24,6 @@
 		5D49A93C1C80DCBD0068A16C /* BBLCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BBLCollection.swift; sourceTree = "<group>"; };
 		5D49A93E1C80DCC80068A16C /* BBLStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BBLStack.swift; sourceTree = "<group>"; };
 		5D49A9401C80DCD50068A16C /* BBLPersistence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BBLPersistence.swift; sourceTree = "<group>"; };
-		5DEB28D11E2BD2AC00ACD840 /* BBLLogging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BBLLogging.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,7 +58,6 @@
 			children = (
 				5D49A9341C80DC650068A16C /* Info.plist */,
 				5D49A9321C80DC650068A16C /* BBLCoreDataKit.h */,
-				5DEB28D11E2BD2AC00ACD840 /* BBLLogging.swift */,
 				5D11548C1DFB9FC20000185D /* BBLFetchedObjectController.swift */,
 				5D49A93A1C80DCAF0068A16C /* BBLObject.swift */,
 				5D49A93C1C80DCBD0068A16C /* BBLCollection.swift */,
@@ -152,7 +149,6 @@
 			files = (
 				5D49A9411C80DCD50068A16C /* BBLPersistence.swift in Sources */,
 				5D49A93D1C80DCBD0068A16C /* BBLCollection.swift in Sources */,
-				5DEB28D21E2BD2AC00ACD840 /* BBLLogging.swift in Sources */,
 				5D49A93F1C80DCC80068A16C /* BBLStack.swift in Sources */,
 				5D49A93B1C80DCAF0068A16C /* BBLObject.swift in Sources */,
 				5D11548D1DFB9FC20000185D /* BBLFetchedObjectController.swift in Sources */,
