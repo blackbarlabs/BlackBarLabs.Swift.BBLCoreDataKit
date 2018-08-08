@@ -15,15 +15,15 @@ open class BBLObject: NSManagedObject {
     
     open var identifier: UUID {
         get {
-            self.willAccessValue(forKey: #keyPath(idString))
+            willAccessValue(forKey: #keyPath(idString))
+            defer { didAccessValue(forKey: #keyPath(idString)) }
             let string = self.primitiveValue(forKey: #keyPath(idString)) as! String
-            self.didAccessValue(forKey: #keyPath(idString))
             return UUID(uuidString: string)!
         }
         set {
-            self.willChangeValue(forKey: #keyPath(idString))
-            self.setPrimitiveValue(newValue.uuidString, forKey: #keyPath(idString))
-            self.didChangeValue(forKey: #keyPath(idString))
+            willChangeValue(forKey: #keyPath(idString))
+            defer { didChangeValue(forKey: #keyPath(idString)) }
+            setPrimitiveValue(newValue.uuidString, forKey: #keyPath(idString))
         }
     }
     
