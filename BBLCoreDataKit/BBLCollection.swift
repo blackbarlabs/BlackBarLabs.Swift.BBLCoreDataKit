@@ -103,6 +103,31 @@ public extension BBLCollection {
         return frc
     }
     
+    func objects(withCompoundPredicate predicate: NSCompoundPredicate, sortDescriptors: [NSSortDescriptor], sectionKeyPath: String? = nil) -> NSFetchedResultsController<Object> {
+        return frc(sortDescriptors: sortDescriptors, predicate: predicate, sectionKeyPath: sectionKeyPath)
+    }
+    
+    func objects(withAndPredicates subpredicates: [NSPredicate], sortDescriptors: [NSSortDescriptor], sectionKeyPath: String? = nil) -> NSFetchedResultsController<Object> {
+        let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: subpredicates)
+        return objects(withCompoundPredicate: compoundPredicate, sortDescriptors: sortDescriptors, sectionKeyPath: sectionKeyPath)
+    }
+    
+    func objects(withOrPredicates subpredicates: [NSPredicate], sortDescriptors: [NSSortDescriptor], sectionKeyPath: String? = nil) -> NSFetchedResultsController<Object> {
+        let compoundPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: subpredicates)
+        return objects(withCompoundPredicate: compoundPredicate, sortDescriptors: sortDescriptors, sectionKeyPath: sectionKeyPath)
+    }
+    
+    func changes(forObject object: BBLObject) -> NSFetchedResultsController<Object> {
+        let predicate = NSPredicate(format: "idString == %@", object.idString)
+        return frc(sortKey: #keyPath(BBLObject.idString), ascending: true, predicate: predicate)
+    }
+    
+    func changes(forObject object: BBLObject?) -> NSFetchedResultsController<Object>? {
+        guard let object = object else { return nil }
+        let predicate = NSPredicate(format: "idString == %@", object.idString)
+        return frc(sortKey: #keyPath(BBLObject.idString), ascending: true, predicate: predicate)
+    }
+    
     // Default FetchedResultsController
     func allObjects() -> NSFetchedResultsController<Object> {
         return frc()
