@@ -30,14 +30,16 @@ open class BBLObject: NSManagedObject {
     open func touchRelationships() {
         entity.relationshipsByName.forEach { (key, relationship) in
             if let inverse = relationship.inverseRelationship {
-                if relationship.isToMany, let set = self.value(forKey: relationship.name) as? Set<BBLObject> {
+                switch relationship.isToMany {
+                case true:
+                    guard let set = self.value(forKey: relationship.name) as? Set<BBLObject> else { return }
                     set.forEach {
                         $0.willChangeValue(forKey: inverse.name)
                         $0.didChangeValue(forKey: inverse.name)
                     }
-                }
-                
-                if !relationship.isToMany, let object = self.value(forKey: relationship.name) as? BBLObject {
+                    
+                case false:
+                    guard let object = self.value(forKey: relationship.name) as? BBLObject else { return }
                     object.willChangeValue(forKey: inverse.name)
                     object.didChangeValue(forKey: inverse.name)
                 }
