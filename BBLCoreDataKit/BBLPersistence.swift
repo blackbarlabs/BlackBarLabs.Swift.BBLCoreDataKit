@@ -15,7 +15,7 @@ public class BBLPersistence: NSObject {
         case inMemory
     }
     
-    // MARK: - Properties
+    // MARK: Properties
     private let modelName: String
     private let storeName: String
     private let shouldKillStore: Bool
@@ -44,7 +44,7 @@ public class BBLPersistence: NSObject {
         return c
     }()
     
-    // MARK: - Public
+    // MARK: Public
     public convenience init(modelName: String) {
         self.init(modelName: modelName, storeName: modelName)
     }
@@ -70,7 +70,7 @@ public class BBLPersistence: NSObject {
         newContext.mergePolicy = mergePolicy
         if concurrencyType == .privateQueueConcurrencyType { newContext.undoManager = nil }
         contexts.insert(newContext)
-        print("===> \(contexts.count) contexts on add")
+        if EnvironmentVariables.logContexts { print("[BBLCoreDataKit] \(contexts.count) contexts on add for \(modelName)") }
         return newContext
     }
     
@@ -84,12 +84,12 @@ public class BBLPersistence: NSObject {
     
     public func removeContext(_ context: NSManagedObjectContext) {
         contexts.remove(context)
-        print("===> \(contexts.count) contexts on remove")
+        if EnvironmentVariables.logContexts { print("[BBLCoreDataKit] \(contexts.count) contexts on remove for \(modelName)") }
     }
     
     public var model: NSManagedObjectModel!
     
-    // MARK: - Private
+    // MARK: Private
     private func configureSQLiteStore(_ coordinator: NSPersistentStoreCoordinator) {
         let options: [AnyHashable: Any] = [ NSMigratePersistentStoresAutomaticallyOption : true,
                         NSInferMappingModelAutomaticallyOption : true,
@@ -137,7 +137,7 @@ public class BBLPersistence: NSObject {
         }
     }
     
-    // MARK: - Notification handlers
+    // MARK: Notification handlers
     @objc func contextSaved(_ notification: Notification) {
         guard let savedContext = notification.object as? NSManagedObjectContext, savedContext.parent == nil else { return }
         let otherContexts = contexts.filter { $0 != savedContext }
@@ -156,3 +156,15 @@ public class BBLPersistence: NSObject {
     }
 }
 
+// MARK: - Global
+enum EnvironmentVariables: String {
+    case BBLCOREDATAKIT_LOG_CONTEXTS
+    
+    var value: String {
+        return ProcessInfo.processInfo.environment[self.rawValue] ?? ""
+    }
+}
+
+extension EnvironmentVariables {
+    static var logContexts: Bool { return EnvironmentVariables.BBLCOREDATAKIT_LOG_CONTEXTS.value == "enable" }
+}
