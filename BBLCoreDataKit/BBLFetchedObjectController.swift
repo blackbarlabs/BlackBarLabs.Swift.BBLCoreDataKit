@@ -69,10 +69,9 @@ public extension BBLFetchedObjectController {
     // MARK: - Progress
     func setObjectId(_ idString: String, inProgress: Bool, onFetchedResultsController frc: FRC) {
         guard var progressSet = objectsInProgress[frc.hash] else { return }
-        if inProgress {
-            progressSet.insert(idString)
-        } else {
-            progressSet.remove(idString)
+        switch inProgress {
+        case true: progressSet.insert(idString)
+        case false: progressSet.remove(idString)
         }
         objectsInProgress[frc.hash] = progressSet
     }
