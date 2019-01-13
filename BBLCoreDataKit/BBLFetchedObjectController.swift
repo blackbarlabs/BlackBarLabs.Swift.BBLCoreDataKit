@@ -24,8 +24,6 @@ public protocol BBLFetchedObjectController: NSFetchedResultsControllerDelegate {
 }
 
 public extension BBLFetchedObjectController {
-    
-    // MARK: Managed Controllers
     func addManagedController(_ frc: FRC, fetchedObjectHandler: @escaping FetchedObjectHandler) {
         if !controllers.contains(frc) { controllers.append(frc) }
         if objectsInProgress[frc.hash] == nil { objectsInProgress[frc.hash] = Set<String>() }
@@ -42,7 +40,7 @@ public extension BBLFetchedObjectController {
         stack.performBlock { [weak self] in
             self?.controllers.forEach { (controller) in
                 controller.delegate = self
-                controller.fetch("BBLFetchedObjectController.startManagedControllers()")
+                try? controller.performFetch()
                 controller.fetchedObjects?.forEach { (object) in
                     self?.controller?(controller, didChange: object, at: nil, for: .insert, newIndexPath: nil)
                 }
@@ -66,7 +64,7 @@ public extension BBLFetchedObjectController {
         }
     }
     
-    // MARK: - Progress
+    // MARK: Progress
     func setObjectId(_ idString: String, inProgress: Bool, onFetchedResultsController frc: FRC) {
         guard var progressSet = objectsInProgress[frc.hash] else { return }
         switch inProgress {

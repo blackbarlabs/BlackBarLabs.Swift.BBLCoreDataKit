@@ -13,20 +13,6 @@ open class BBLObject: NSManagedObject {
     
     @NSManaged public var idString: String
     
-    open var identifier: UUID {
-        get {
-            willAccessValue(forKey: #keyPath(idString))
-            defer { didAccessValue(forKey: #keyPath(idString)) }
-            let string = self.primitiveValue(forKey: #keyPath(idString)) as! String
-            return UUID(uuidString: string)!
-        }
-        set {
-            willChangeValue(forKey: #keyPath(idString))
-            defer { didChangeValue(forKey: #keyPath(idString)) }
-            setPrimitiveValue(newValue.uuidString, forKey: #keyPath(idString))
-        }
-    }
-    
     open func touchRelationships() {
         entity.relationshipsByName.forEach { (key, relationship) in
             if let inverse = relationship.inverseRelationship {

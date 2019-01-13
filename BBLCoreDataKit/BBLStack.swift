@@ -9,14 +9,12 @@
 import Foundation
 import CoreData
 
-// MARK: - BBLStack Protocol
 public protocol BBLStack {
     static var persistence: BBLPersistence { get }
     var context: NSManagedObjectContext! { get set }
     init()
 }
 
-// MARK: - Extensions
 public extension BBLStack {
     init(concurrencyType: NSManagedObjectContextConcurrencyType, mergePolicy: AnyObject = NSErrorMergePolicy) {
         self.init()
@@ -40,11 +38,9 @@ public extension BBLStack {
     
     func performBlockAndWait(_ block: @escaping () -> Void) { context.performAndWait(block) }
     
-    func save(_ site: String) {
+    func save() throws {
         guard context.hasChanges else { return }
-        do { try context.save() }
-        catch let error as NSError { NSLog("===> %@ save error: %@", site, error.localizedDescription) }
+        try context.save()
     }
-
 }
 

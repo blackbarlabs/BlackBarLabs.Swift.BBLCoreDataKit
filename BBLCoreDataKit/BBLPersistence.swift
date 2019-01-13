@@ -15,36 +15,6 @@ public class BBLPersistence: NSObject {
         case inMemory
     }
     
-    // MARK: Properties
-    private let modelName: String
-    private let storeName: String
-    private let shouldKillStore: Bool
-    private let storeType: StoreType
-    private var contexts = Set<NSManagedObjectContext>()
-    private lazy var coordinator: NSPersistentStoreCoordinator = {
-        guard let modelUrl = Bundle.main.url(forResource: self.modelName, withExtension: "momd"),
-            let model = NSManagedObjectModel(contentsOf: modelUrl) else {
-                fatalError("Couldn't create model")
-        }
-        
-        self.model = model
-        let c = NSPersistentStoreCoordinator(managedObjectModel: model)
-        
-        switch storeType {
-        case .sqlite:
-            self.configureSQLiteStore(c)
-            
-        case .inMemory:
-            self.configureInMemoryStore(c)
-        }
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(contextSaved(_:)),
-                                               name: .NSManagedObjectContextDidSave,
-                                               object: nil)
-        return c
-    }()
-    
-    // MARK: Public
     public init(modelName: String, storeName: String? = nil, shouldKillStore: Bool = false, storeType: StoreType = .sqlite) {
         self.modelName = modelName
         self.storeName = storeName ?? modelName
@@ -78,6 +48,34 @@ public class BBLPersistence: NSObject {
     public var model: NSManagedObjectModel!
     
     // MARK: Private
+    private let modelName: String
+    private let storeName: String
+    private let shouldKillStore: Bool
+    private let storeType: StoreType
+    private var contexts = Set<NSManagedObjectContext>()
+    private lazy var coordinator: NSPersistentStoreCoordinator = {
+        guard let modelUrl = Bundle.main.url(forResource: self.modelName, withExtension: "momd"),
+            let model = NSManagedObjectModel(contentsOf: modelUrl) else {
+                fatalError("Couldn't create model")
+        }
+        
+        self.model = model
+        let c = NSPersistentStoreCoordinator(managedObjectModel: model)
+        
+        switch storeType {
+        case .sqlite:
+            self.configureSQLiteStore(c)
+            
+        case .inMemory:
+            self.configureInMemoryStore(c)
+        }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(contextSaved(_:)),
+                                               name: .NSManagedObjectContextDidSave,
+                                               object: nil)
+        return c
+    }()
+    
     private func configureSQLiteStore(_ coordinator: NSPersistentStoreCoordinator) {
         let options: [AnyHashable: Any] = [ NSMigratePersistentStoresAutomaticallyOption : true,
                         NSInferMappingModelAutomaticallyOption : true,
