@@ -96,12 +96,3 @@ open class BBLObject: NSManagedObject {
         handler(change?[.newKey], change?[.oldKey])
     }
 }
-
-// MARK: - Extensions
-extension NSManagedObject {
-    static var entityName : String {
-        let components = NSStringFromClass(self).components(separatedBy: ".")
-        return components[1]
-    }
-}
-

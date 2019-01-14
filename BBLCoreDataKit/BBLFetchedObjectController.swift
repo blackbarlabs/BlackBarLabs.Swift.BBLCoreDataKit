@@ -24,16 +24,16 @@ public protocol BBLFetchedObjectController: NSFetchedResultsControllerDelegate {
 }
 
 public extension BBLFetchedObjectController {
-    func addManagedController(_ frc: FRC, fetchedObjectHandler: @escaping FetchedObjectHandler) {
-        if !controllers.contains(frc) { controllers.append(frc) }
-        if objectsInProgress[frc.hash] == nil { objectsInProgress[frc.hash] = Set<String>() }
-        if fetchedObjectHandlers[frc.hash] == nil { fetchedObjectHandlers[frc.hash] = fetchedObjectHandler }
+    func addManagedController(_ controller: FRC, withHandler handler: @escaping FetchedObjectHandler) {
+        if !controllers.contains(controller) { controllers.append(controller) }
+        if objectsInProgress[controller.hash] == nil { objectsInProgress[controller.hash] = Set<String>() }
+        if fetchedObjectHandlers[controller.hash] == nil { fetchedObjectHandlers[controller.hash] = handler }
     }
     
-    func removeManagedController(_ frc: FRC) {
-        if let index = controllers.index(of: frc) { controllers.remove(at: index) }
-        if objectsInProgress[frc.hash] != nil { objectsInProgress[frc.hash] = nil }
-        if fetchedObjectHandlers[frc.hash] != nil { fetchedObjectHandlers[frc.hash] = nil }
+    func removeManagedController(_ controller: FRC) {
+        if let index = controllers.index(of: controller) { controllers.remove(at: index) }
+        if objectsInProgress[controller.hash] != nil { objectsInProgress[controller.hash] = nil }
+        if fetchedObjectHandlers[controller.hash] != nil { fetchedObjectHandlers[controller.hash] = nil }
     }
     
     func startManagedControllers() {
@@ -65,17 +65,17 @@ public extension BBLFetchedObjectController {
     }
     
     // MARK: Progress
-    func setObjectId(_ idString: String, inProgress: Bool, onFetchedResultsController frc: FRC) {
-        guard var progressSet = objectsInProgress[frc.hash] else { return }
+    func setObjectId(_ idString: String, inProgress: Bool, onController controller: FRC) {
+        guard var progressSet = objectsInProgress[controller.hash] else { return }
         switch inProgress {
         case true: progressSet.insert(idString)
         case false: progressSet.remove(idString)
         }
-        objectsInProgress[frc.hash] = progressSet
+        objectsInProgress[controller.hash] = progressSet
     }
     
-    func objectIdIsInProgress(_ idString: String, onFetchedResultsController frc: FRC) -> Bool {
-        guard let progressSet = objectsInProgress[frc.hash] else { return false }
+    func objectIdIsInProgress(_ idString: String, onController controller: FRC) -> Bool {
+        guard let progressSet = objectsInProgress[controller.hash] else { return false }
         return progressSet.contains(idString)
     }
 }

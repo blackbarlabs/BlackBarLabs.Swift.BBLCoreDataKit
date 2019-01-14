@@ -9,13 +9,6 @@
 import Foundation
 import CoreData
 
-extension NSManagedObjectContext {
-    func insert<T>(_ object: T.Type) -> T where T: BBLObject {
-        return NSEntityDescription.insertNewObject(forEntityName: object.entityName, into:self) as! T
-    }
-}
-
-// MARK: -
 public protocol BBLCollection {
     associatedtype Object: BBLObject
     var context: NSManagedObjectContext! { get set }
@@ -29,7 +22,7 @@ public extension BBLCollection {
     }
     
     func existingObject(withId idString: String) -> Object? {
-        let request = NSFetchRequest<Object>(entityName: entityName)
+        let request = Object.fetchRequest() as! NSFetchRequest<Object>
         request.predicate = NSPredicate(format: "idString == %@", idString)
         request.fetchLimit = 1
         request.returnsObjectsAsFaults = false
@@ -37,7 +30,7 @@ public extension BBLCollection {
     }
     
     func object(withId idString: String) -> Object {
-        let request = NSFetchRequest<Object>(entityName: entityName)
+        let request = Object.fetchRequest() as! NSFetchRequest<Object>
         request.predicate = NSPredicate(format: "idString == %@", idString)
         request.fetchLimit = 1
         request.returnsObjectsAsFaults = false
@@ -47,13 +40,11 @@ public extension BBLCollection {
             return object
             
         case .none:
-            let newObject = context.insert(Object.self)
+            let newObject = Object(context: context)
             newObject.idString = idString
             return newObject
         }
     }
-    
-    var entityName: String { return Object.entityName }
     
     // FetchedResultsController constructors
     func frc(sortKey: String = #keyPath(BBLObject.idString), ascending: Bool = true,
@@ -63,10 +54,10 @@ public extension BBLCollection {
     }
     
     func frc(sortDescriptors: [NSSortDescriptor], predicate: NSPredicate? = nil, sectionKeyPath: String? = nil) -> NSFetchedResultsController<Object> {
-        let fetchRequest = NSFetchRequest<Object>(entityName: entityName)
-        fetchRequest.sortDescriptors = sortDescriptors
-        fetchRequest.predicate = predicate
-        let frc = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: sectionKeyPath, cacheName: nil)
+        let request = Object.fetchRequest() as! NSFetchRequest<Object>
+        request.sortDescriptors = sortDescriptors
+        request.predicate = predicate
+        let frc = NSFetchedResultsController(fetchRequest: request, managedObjectContext: context, sectionNameKeyPath: sectionKeyPath, cacheName: nil)
         return frc
     }
     
@@ -105,7 +96,7 @@ public extension BBLCollection {
     
     // Operations
     func deleteAll() {
-        let request = NSFetchRequest<Object>(entityName: entityName)
+        let request = Object.fetchRequest() as! NSFetchRequest<Object>
         request.includesPropertyValues = false
         guard let fetched = try? context.fetch(request) else { return }
         fetched.forEach { (object) in context.delete(object) }
