@@ -9,14 +9,14 @@
 import Foundation
 import CoreData
 
-public typealias FRC = NSFetchedResultsController<NSFetchRequestResult>
-public typealias FetchedObjectHandler = (BBLObject, FRC) -> Void
+public typealias FetchedResultsController = NSFetchedResultsController<NSFetchRequestResult>
+public typealias FetchedObjectHandler = (BBLObject, FetchedResultsController) -> Void
 
 public protocol BBLFetchedObjectController: NSFetchedResultsControllerDelegate {
     associatedtype ControllerStack: BBLStack
     
     var stack: ControllerStack { get }
-    var controllers: [FRC] { get set }
+    var controllers: [FetchedResultsController] { get set }
     var objectsInProgress: [ Int : Set<String> ] { get set }
     var fetchedObjectHandlers: [ Int : FetchedObjectHandler ] { get set }
     
@@ -24,13 +24,14 @@ public protocol BBLFetchedObjectController: NSFetchedResultsControllerDelegate {
 }
 
 public extension BBLFetchedObjectController {
-    func addManagedController(_ controller: FRC, withHandler handler: @escaping FetchedObjectHandler) {
+    func addManagedController(_ controller: FetchedResultsController,
+                              withHandler handler: @escaping FetchedObjectHandler) {
         if !controllers.contains(controller) { controllers.append(controller) }
         if objectsInProgress[controller.hash] == nil { objectsInProgress[controller.hash] = Set<String>() }
         if fetchedObjectHandlers[controller.hash] == nil { fetchedObjectHandlers[controller.hash] = handler }
     }
     
-    func removeManagedController(_ controller: FRC) {
+    func removeManagedController(_ controller: FetchedResultsController) {
         if let index = controllers.index(of: controller) { controllers.remove(at: index) }
         if objectsInProgress[controller.hash] != nil { objectsInProgress[controller.hash] = nil }
         if fetchedObjectHandlers[controller.hash] != nil { fetchedObjectHandlers[controller.hash] = nil }
@@ -65,7 +66,8 @@ public extension BBLFetchedObjectController {
     }
     
     // MARK: Progress
-    func setObjectId(_ idString: String, inProgress: Bool, onController controller: FRC) {
+    func setObjectId(_ idString: String, inProgress: Bool,
+                     onController controller: FetchedResultsController) {
         guard var progressSet = objectsInProgress[controller.hash] else { return }
         switch inProgress {
         case true: progressSet.insert(idString)
@@ -74,7 +76,8 @@ public extension BBLFetchedObjectController {
         objectsInProgress[controller.hash] = progressSet
     }
     
-    func objectIdIsInProgress(_ idString: String, onController controller: FRC) -> Bool {
+    func objectIdIsInProgress(_ idString: String,
+                              onController controller: FetchedResultsController) -> Bool {
         guard let progressSet = objectsInProgress[controller.hash] else { return false }
         return progressSet.contains(idString)
     }
