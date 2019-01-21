@@ -11,16 +11,10 @@ import CoreData
 
 public protocol BBLCollection {
     associatedtype Object: BBLObject
-    var context: NSManagedObjectContext! { get set }
-    init()
+    var context: NSManagedObjectContext { get }
 }
 
 public extension BBLCollection {
-    init(context: NSManagedObjectContext) {
-        self.init()
-        self.context = context
-    }
-    
     func existingObject(withId idString: String) -> Object? {
         let request = Object.fetchRequest() as! NSFetchRequest<Object>
         request.predicate = NSPredicate(format: "idString == %@", idString)
@@ -47,13 +41,8 @@ public extension BBLCollection {
     }
     
     // FetchedResultsController constructors
-    func frc(sortKey: String = #keyPath(BBLObject.idString), ascending: Bool = true,
-             predicate: NSPredicate? = nil, sectionKeyPath: String? = nil) -> NSFetchedResultsController<Object> {
-        let descriptor = NSSortDescriptor(key: sortKey, ascending: ascending)
-        return frc(sortDescriptors: [ descriptor ], predicate: predicate, sectionKeyPath: sectionKeyPath)
-    }
-    
-    func frc(sortDescriptors: [NSSortDescriptor], predicate: NSPredicate? = nil, sectionKeyPath: String? = nil) -> NSFetchedResultsController<Object> {
+    func frc(withSortDescriptors sortDescriptors: [NSSortDescriptor], predicate: NSPredicate? = nil,
+             sectionKeyPath: String? = nil) -> NSFetchedResultsController<Object> {
         let request = Object.fetchRequest() as! NSFetchRequest<Object>
         request.sortDescriptors = sortDescriptors
         request.predicate = predicate
@@ -61,37 +50,43 @@ public extension BBLCollection {
         return frc
     }
     
-    func objects(withCompoundPredicate predicate: NSCompoundPredicate, sortDescriptors: [NSSortDescriptor],
-                 sectionKeyPath: String? = nil) -> NSFetchedResultsController<Object> {
-        return frc(sortDescriptors: sortDescriptors, predicate: predicate, sectionKeyPath: sectionKeyPath)
+    func frc(withSortKey sortKey: String, ascending: Bool = true,
+             predicate: NSPredicate? = nil, sectionKeyPath: String? = nil) -> NSFetchedResultsController<Object> {
+        let descriptor = NSSortDescriptor(key: sortKey, ascending: ascending)
+        return frc(withSortDescriptors: [ descriptor ], predicate: predicate, sectionKeyPath: sectionKeyPath)
     }
     
-    func objects(withAndPredicates subpredicates: [NSPredicate], sortDescriptors: [NSSortDescriptor],
+    func frc(withCompoundPredicate predicate: NSCompoundPredicate, sortDescriptors: [NSSortDescriptor],
+                 sectionKeyPath: String? = nil) -> NSFetchedResultsController<Object> {
+        return frc(withSortDescriptors: sortDescriptors, predicate: predicate, sectionKeyPath: sectionKeyPath)
+    }
+    
+    func frc(withAndPredicates subpredicates: [NSPredicate], sortDescriptors: [NSSortDescriptor],
                  sectionKeyPath: String? = nil) -> NSFetchedResultsController<Object> {
         let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: subpredicates)
-        return objects(withCompoundPredicate: compoundPredicate, sortDescriptors: sortDescriptors, sectionKeyPath: sectionKeyPath)
+        return frc(withCompoundPredicate: compoundPredicate, sortDescriptors: sortDescriptors, sectionKeyPath: sectionKeyPath)
     }
     
-    func objects(withOrPredicates subpredicates: [NSPredicate], sortDescriptors: [NSSortDescriptor],
+    func frc(withOrPredicates subpredicates: [NSPredicate], sortDescriptors: [NSSortDescriptor],
                  sectionKeyPath: String? = nil) -> NSFetchedResultsController<Object> {
         let compoundPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: subpredicates)
-        return objects(withCompoundPredicate: compoundPredicate, sortDescriptors: sortDescriptors, sectionKeyPath: sectionKeyPath)
+        return frc(withCompoundPredicate: compoundPredicate, sortDescriptors: sortDescriptors, sectionKeyPath: sectionKeyPath)
     }
     
-    func changes(forObject object: BBLObject) -> NSFetchedResultsController<Object> {
+    func frc(forObject object: BBLObject) -> NSFetchedResultsController<Object> {
         let predicate = NSPredicate(format: "idString == %@", object.idString)
-        return frc(sortKey: #keyPath(BBLObject.idString), ascending: true, predicate: predicate)
+        return frc(withSortKey: #keyPath(BBLObject.idString), ascending: true, predicate: predicate)
     }
     
-    func changes(forObject object: BBLObject?) -> NSFetchedResultsController<Object>? {
+    func frc(forObject object: BBLObject?) -> NSFetchedResultsController<Object>? {
         guard let object = object else { return nil }
         let predicate = NSPredicate(format: "idString == %@", object.idString)
-        return frc(sortKey: #keyPath(BBLObject.idString), ascending: true, predicate: predicate)
+        return frc(withSortKey: #keyPath(BBLObject.idString), ascending: true, predicate: predicate)
     }
     
     // Default FetchedResultsController
     func allObjects() -> NSFetchedResultsController<Object> {
-        return frc()
+        return frc(withSortKey: #keyPath(BBLObject.idString))
     }
     
     // Operations
