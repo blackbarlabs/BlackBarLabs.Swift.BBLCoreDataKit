@@ -32,7 +32,7 @@ public extension BBLFetchedObjectController {
     }
     
     func removeManagedController(_ controller: FetchedResultsController) {
-        if let index = controllers.index(of: controller) { controllers.remove(at: index) }
+        if let index = controllers.firstIndex(of: controller) { controllers.remove(at: index) }
         if objectsInProgress[controller.hash] != nil { objectsInProgress[controller.hash] = nil }
         if fetchedObjectHandlers[controller.hash] != nil { fetchedObjectHandlers[controller.hash] = nil }
     }
